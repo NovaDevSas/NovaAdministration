@@ -14,6 +14,7 @@ export const getFinanceItems = async (projectId) => {
 
 export const createFinanceItem = async (financeItem) => {
   try {
+    
     const response = await axios.post(API_URL, financeItem);
     return response.data;
   } catch (error) {

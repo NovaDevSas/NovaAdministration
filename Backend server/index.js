@@ -8,6 +8,7 @@ const companyRoutes = require('./routes/companyRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const financeItemRoutes = require('./routes/financeItemRoutes');
 const userRoutes = require('./routes/userRoutes');
+const { swaggerUi, specs } = require('./config/swagger'); // Asegúrate de que la ruta sea correcta
 require('dotenv').config();
 
 const app = express();
@@ -30,6 +31,9 @@ app.use('/api/companies', companyRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/finance-items', financeItemRoutes);
 app.use('/api/users', userRoutes);
+
+// Documentación Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);

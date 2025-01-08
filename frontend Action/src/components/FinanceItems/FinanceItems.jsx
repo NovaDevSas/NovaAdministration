@@ -101,9 +101,13 @@ const FinanceItems = () => {
   const saveFinanceItem = async () => {
     setLoading(true);
     try {
-      console.log('FinanceItem before save:', financeItem); // Verificar el objeto financeItem antes de guardar
-      const saveAction = editingItem ? updateFinanceItem : createFinanceItem;
-      const savedItem = await saveAction(financeItem._id, financeItem);
+      // Verificar el objeto financeItem antes de guardar
+      let savedItem;
+      if (editingItem) {
+        savedItem = await updateFinanceItem(financeItem._id, financeItem);
+      } else {
+        savedItem = await createFinanceItem(financeItem);
+      }
       let updatedItems;
       if (editingItem) {
         updatedItems = financeItems.map((item) => (item._id === savedItem._id ? savedItem : item));

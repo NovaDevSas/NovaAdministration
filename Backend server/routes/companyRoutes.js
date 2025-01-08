@@ -2,19 +2,122 @@ const express = require('express');
 const router = express.Router();
 const companyController = require('../controllers/companyController');
 
-// Obtener todas las empresas
+/**
+ * @swagger
+ * tags:
+ *   name: Companies
+ *   description: Endpoints para la gestión de empresas
+ */
+
+/**
+ * @swagger
+ * /api/companies:
+ *   get:
+ *     summary: Obtener todas las empresas
+ *     tags: [Companies]
+ *     responses:
+ *       200:
+ *         description: Lista de empresas obtenida exitosamente
+ *       400:
+ *         description: Error en la solicitud
+ */
 router.get('/', companyController.getCompanies);
 
-// Obtener una empresa por ID
+/**
+ * @swagger
+ * /api/companies/{id}:
+ *   get:
+ *     summary: Obtener una empresa por ID
+ *     tags: [Companies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la empresa
+ *     responses:
+ *       200:
+ *         description: Empresa obtenida exitosamente
+ *       400:
+ *         description: Error en la solicitud
+ */
 router.get('/:id', companyController.getCompanyById);
 
-// Crear una nueva empresa
+/**
+ * @swagger
+ * /api/companies:
+ *   post:
+ *     summary: Crear una nueva empresa
+ *     tags: [Companies]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Empresa creada exitosamente
+ *       400:
+ *         description: Error en la solicitud
+ */
 router.post('/', companyController.addCompany);
 
-// Actualizar una empresa
+/**
+ * @swagger
+ * /api/companies/{id}:
+ *   put:
+ *     summary: Actualizar una empresa
+ *     tags: [Companies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la empresa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Empresa actualizada exitosamente
+ *       400:
+ *         description: Error en la solicitud
+ */
 router.put('/:id', companyController.updateCompany);
 
-// Eliminar una empresa
+/**
+ * @swagger
+ * /api/companies/{id}:
+ *   delete:
+ *     summary: Eliminar una empresa
+ *     tags: [Companies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la empresa
+ *     responses:
+ *       200:
+ *         description: Empresa eliminada exitosamente
+ *       400:
+ *         description: Error en la solicitud
+ */
 router.delete('/:id', companyController.deleteCompany);
 
 module.exports = router;
