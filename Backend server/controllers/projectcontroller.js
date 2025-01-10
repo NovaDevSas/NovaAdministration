@@ -1,13 +1,23 @@
 const Project = require('../models/Project');
 
-// Obtener todos los proyectos de una empresa
+// Obtener todos los proyectos
+exports.getProjects = async (req, res) => {
+  try {
+    const projects = await Project.find();
+    res.json(projects);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener los proyectos' });
+  }
+};
+
+// Obtener proyectos por ID de empresa
 exports.getProjectsByCompany = async (req, res) => {
   try {
     const { companyId } = req.params;
-    const projects = await Project.find({ companyId }).populate('companyId', 'name');
-    res.status(200).json(projects);
+    const projects = await Project.find({ companyId });
+    res.json(projects);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener los proyectos', error });
+    res.status(500).json({ message: 'Error al obtener los proyectos por empresa', error });
   }
 };
 
@@ -18,9 +28,9 @@ exports.getProjectById = async (req, res) => {
     if (!project) {
       return res.status(404).json({ message: 'Proyecto no encontrado' });
     }
-    res.status(200).json(project);
+    res.json(project);
   } catch (error) {
-    res.status(500).json({ message: 'Error al obtener el proyecto', error });
+    res.status(500).json({ message: 'Error al obtener el proyecto' });
   }
 };
 

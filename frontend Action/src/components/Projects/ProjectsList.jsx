@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { FaEdit, FaTrash, FaMoneyBillWave, FaExpand } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaMoneyBillWave, FaExpand, FaEye } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import ProjectDetailsModal from './ProjectDetailsModal';
 
 const statusBadge = (status) => {
   const statusColors = {
@@ -30,7 +31,7 @@ const formatDate = (date) => {
 
 const ProjectsList = ({ projects, onEdit, onDelete }) => {
   const navigate = useNavigate();
-  const [selectedDescription, setSelectedDescription] = useState('');
+  const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Mostrar 5 proyectos por página
@@ -41,14 +42,14 @@ const ProjectsList = ({ projects, onEdit, onDelete }) => {
     navigate(`/finance-items/${projectId}`);
   };
 
-  const handleDescriptionClick = (description) => {
-    setSelectedDescription(description);
+  const handleViewDetails = (project) => {
+    setSelectedProject(project);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedDescription('');
+    setSelectedProject(null);
   };
 
   const paginateProjects = (projects) => {
@@ -91,7 +92,7 @@ const ProjectsList = ({ projects, onEdit, onDelete }) => {
                     {project.description?.length > 50 ? (
                       <div
                         className="flex items-center gap-2 cursor-pointer hover:underline text-blue-600"
-                        onClick={() => handleDescriptionClick(project.description)}
+                        onClick={() => handleViewDetails(project)}
                         title="Haz clic para ver más detalles"
                       >
                         {`${project.description.slice(0, 50)}...`}
@@ -105,8 +106,16 @@ const ProjectsList = ({ projects, onEdit, onDelete }) => {
                   <td className="py-3 px-4 text-gray-600">{formatDate(project.startDate)}</td>
                   <td className="py-3 px-4 flex justify-center gap-3">
                     <button
+                      onClick={() => handleViewDetails(project)}
+                      className="p-2 bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 focus:ring-2 focus:ring-yellow-400 transition"
+                      aria-label={`Ver detalles del proyecto: ${project.name}`}
+                      title="Ver detalles"
+                    >
+                      <FaEye />
+                    </button>
+                    <button
                       onClick={() => onEdit(project)}
-                      className="p-2 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 focus:ring-2 focus:ring-blue-400 transition"
+                      className="p-2 bg-green-100 text-green-600 rounded-full hover:bg-green-200 focus:ring-2 focus:ring-green-400 transition"
                       aria-label={`Editar proyecto: ${project.name}`}
                       title="Editar"
                     >
@@ -157,21 +166,9 @@ const ProjectsList = ({ projects, onEdit, onDelete }) => {
         </>
       )}
 
-      {/* Modal para mostrar descripción completa */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl p-6 max-w-lg w-full relative">
-            <h3 className="text-lg font-semibold mb-4">Descripción Completa</h3>
-            <p className="text-gray-700">{selectedDescription}</p>
-            <button
-              onClick={closeModal}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-              aria-label="Cerrar descripción"
-            >
-              ×
-            </button>
-          </div>
-        </div>
+      {/* Modal para mostrar detalles completos */}
+      {isModalOpen && selectedProject && (
+        <ProjectDetailsModal project={selectedProject} onClose={closeModal} />
       )}
     </div>
   );
@@ -185,6 +182,8 @@ ProjectsList.propTypes = {
       description: PropTypes.string,
       status: PropTypes.string.isRequired,
       startDate: PropTypes.string, // Usar startDate como fecha de creación
+      endDate: PropTypes.string,
+      budget: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     })
   ).isRequired,
   onEdit: PropTypes.func.isRequired,

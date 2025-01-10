@@ -4,12 +4,9 @@ const projectSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true,
   },
   description: {
     type: String,
-    required: true,
-    trim: true,
   },
   startDate: {
     type: Date,
@@ -31,6 +28,18 @@ const projectSchema = new mongoose.Schema({
   },
   budget: {
     type: Number,
+    required: true,
+  },
+  port: {
+    type: String,
+    required: true,
+  },
+  host: {
+    type: String,
+    required: true,
+  },
+  subdomain: {
+    type: String,
     required: true,
   },
 });

@@ -11,12 +11,14 @@ const FinanceItemForm = ({
 }) => {
   const [errors, setErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
-  const [date, setDate] = useState(financeItem.date || '');
+  const [date, setDate] = useState('');
 
   // Sincronizar fecha con el estado local
   useEffect(() => {
-    setDate(financeItem.date || '');
-  }, [financeItem]);
+    if (financeItem.date) {
+      setDate(financeItem.date);
+    }
+  }, [financeItem.date]);
 
   const validateForm = () => {
     const newErrors = {};

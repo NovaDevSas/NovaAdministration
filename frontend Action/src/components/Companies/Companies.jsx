@@ -60,7 +60,7 @@ const Companies = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-200 relative overflow-hidden flex flex-col">
       {/* Fondo dinámico */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none z-0">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 1440 320"
@@ -105,7 +105,7 @@ const Companies = () => {
         </div>
       )}
 
-      <div className={`max-w-7xl mx-auto p-6 ${loading ? 'opacity-50' : 'opacity-100 transition-opacity duration-300'}`}>
+      <div className={`max-w-7xl mx-auto p-6 ${loading ? 'opacity-50' : 'opacity-100 transition-opacity duration-300 z-10'}`}>
         {/* Encabezado */}
         <CompanyHeader onNewCompany={() => setIsModalOpen(true)} />
 
