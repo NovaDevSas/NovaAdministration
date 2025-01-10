@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import FileInputField from './FileInputField';
 
 const InputField = ({ label, name, value, onChange, error, type = 'text', required = false }) => (
-  <div className="relative">
+  <div className="relative w-full">
     <label className="block text-sm font-medium text-gray-700 mb-1">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
@@ -10,7 +11,7 @@ const InputField = ({ label, name, value, onChange, error, type = 'text', requir
       name={name}
       value={value}
       onChange={onChange}
-      className={`w-full p-2 border rounded-md focus:ring-2 focus:outline-none transition ${
+      className={`w-full p-2 border rounded-md focus:ring-2 focus:outline-none transition text-sm ${
         error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-purple-500'
       }`}
     />
@@ -19,7 +20,7 @@ const InputField = ({ label, name, value, onChange, error, type = 'text', requir
 );
 
 const SelectField = ({ label, name, value, onChange, options, required = false }) => (
-  <div className="relative">
+  <div className="relative w-full">
     <label className="block text-sm font-medium text-gray-700 mb-1">
       {label} {required && <span className="text-red-500">*</span>}
     </label>
@@ -27,7 +28,7 @@ const SelectField = ({ label, name, value, onChange, options, required = false }
       name={name}
       value={value}
       onChange={onChange}
-      className="w-full p-2 border rounded-md focus:ring-2 focus:outline-none transition border-gray-300 focus:ring-purple-500"
+      className="w-full p-2 border rounded-md focus:ring-2 focus:outline-none transition text-sm border-gray-300 focus:ring-purple-500"
     >
       {options.map((option) => (
         <option key={option.value} value={option.value}>
@@ -53,6 +54,8 @@ const CompanyForm = ({ company, onChange, onSave, onCancel, isEditing }) => {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      const firstError = Object.keys(validationErrors)[0];
+      document.getElementsByName(firstError)[0]?.focus();
       return;
     }
     setErrors({});
@@ -60,9 +63,9 @@ const CompanyForm = ({ company, onChange, onSave, onCancel, isEditing }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-30">
-      <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full border-t-4 border-purple-500 transform scale-95 hover:scale-100 transition-transform duration-300">
-        <h2 className="text-xl font-bold text-gray-800 mb-3 text-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-30">
+      <div className="bg-white p-4 rounded-lg shadow-xl max-w-sm w-full border-t-4 border-purple-500 transform transition-transform duration-300 scale-95 hover:scale-100">
+        <h2 className="text-lg font-bold text-gray-800 mb-3 text-center">
           {isEditing ? `Editar Empresa: ${company.name}` : 'Crear Nueva Empresa'}
         </h2>
         <form
@@ -108,35 +111,42 @@ const CompanyForm = ({ company, onChange, onSave, onCancel, isEditing }) => {
             ]}
             required
           />
-          <InputField
-            label="Código"
-            name="code"
-            value={company.code}
-            onChange={onChange}
-          />
-          <InputField
-            label="NIT"
-            name="nit"
-            value={company.nit}
-            onChange={onChange}
-          />
+          <div className="flex gap-2">
+            <InputField
+              label="Código"
+              name="code"
+              value={company.code}
+              onChange={onChange}
+            />
+            <InputField
+              label="NIT"
+              name="nit"
+              value={company.nit}
+              onChange={onChange}
+            />
+          </div>
           <InputField
             label="Dirección"
             name="address"
             value={company.address}
             onChange={onChange}
           />
+          <FileInputField
+            label="Subir Archivo"
+            name="file"
+            onChange={onChange}
+          />
           <div className="flex justify-end gap-2">
             <button
               type="button"
               onClick={onCancel}
-              className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:ring-2 focus:ring-gray-400"
+              className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:ring-2 focus:ring-gray-400 text-sm"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-3 py-1 bg-purple-500 text-white rounded-md hover:bg-purple-600 focus:ring-2 focus:ring-purple-400"
+              className="px-3 py-1 bg-purple-500 text-white rounded-md hover:bg-purple-600 focus:ring-2 focus:ring-purple-400 text-sm"
             >
               {isEditing ? 'Actualizar' : 'Crear'}
             </button>

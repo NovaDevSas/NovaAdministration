@@ -8,7 +8,8 @@ import ProjectSearch from './ProjectSearch';
 import ProjectsList from './ProjectsList';
 import ProjectForm from './ProjectForm';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
-import { getCompanyById } from '../../services/companyService';
+import ProjectsTabs from './ProjectsTabs';
+import { getCompanyById } from '../../services/companyService'; // Importar getCompanyById
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -34,18 +35,17 @@ const Projects = () => {
 
   const [loading, setLoading] = useState(false);
   const [companyName, setCompanyName] = useState('Cargando nombre...');
+  const [activeTab, setActiveTab] = useState('all');
   const toastId = useRef(null);
+
+  const isEditing = !!editingProject;
 
   // Obtener el nombre de la empresa
   useEffect(() => {
     const fetchCompanyName = async () => {
       try {
         const company = await getCompanyById(companyId);
-        if (company?.name) {
-          setCompanyName(company.name);
-        } else {
-          setCompanyName('Nombre no disponible');
-        }
+        setCompanyName(company?.name || 'Nombre no disponible');
       } catch (error) {
         console.error('Error fetching company name:', error);
         setCompanyName('Error al cargar el nombre');
@@ -69,27 +69,52 @@ const Projects = () => {
     setLoading(projectsLoading);
   }, [projectsLoading]);
 
-  const isEditing = !!editingProject;
-
   const filteredProjects = projects
     .filter((project) =>
-      project.name.toLowerCase().includes(searchQuery.toLowerCase())
+      activeTab === 'all'
+        ? project.name.toLowerCase().includes(searchQuery.toLowerCase())
+        : project.status === activeTab && project.name.toLowerCase().includes(searchQuery.toLowerCase())
     )
     .sort((a, b) => (a.status === 'inactivo' ? 1 : -1));
 
+  const handleSearchChange = (e) => setSearchQuery(e.target.value);
   const openModal = () => setIsModalOpen(true);
 
+  const projectCounts = {
+    all: projects.length,
+    active: projects.filter((p) => p.status === 'active').length,
+    completed: projects.filter((p) => p.status === 'completed').length,
+    'processing': projects.filter((p) => p.status === 'processing').length,
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-gray-100 to-gray-200 p-8 relative">
+    <div className="min-h-screen bg-gradient-to-b from-white via-purple-50 to-purple-100 p-8 relative overflow-hidden">
+      {/* Fondo dinámico */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1440 320"
+          className="w-full h-full"
+          preserveAspectRatio="none"
+        >
+          <path
+            fill="rgba(236, 242, 255, 0.8)"
+            d="M0,224L48,213.3C96,203,192,181,288,192C384,203,480,245,576,234.7C672,224,768,160,864,133.3C960,107,1056,117,1152,133.3C1248,149,1344,171,1392,181.3L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+          />
+        </svg>
+      </div>
+
+      {/* Botón para regresar */}
       <button
         onClick={() => navigate('/companies')}
-        className="absolute top-4 left-4 flex items-center justify-center w-10 h-10 bg-purple-500 text-white rounded-full shadow-lg hover:bg-purple-600 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className="absolute top-4 left-4 flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-full shadow-md hover:from-purple-600 hover:to-indigo-600 transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-purple-400 z-10"
         title="Regresar a Companies"
         aria-label="Regresar a Companies"
       >
         ←
       </button>
 
+      {/* Notificaciones */}
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -101,31 +126,30 @@ const Projects = () => {
         pauseOnHover
       />
 
+      {/* Indicador de carga */}
       {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-40 z-50">
-          <div className="flex flex-col items-center space-y-2">
-            <div className="w-6 h-6 border-4 border-purple-500 border-opacity-50 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-sm text-gray-300">Cargando...</span>
-          </div>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+          <div className="w-8 h-8 border-4 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
         </div>
       )}
 
-      <div className={`max-w-7xl mx-auto ${loading ? 'opacity-50' : 'opacity-100 transition-opacity duration-300'}`}>
-        <ProjectsHeader companyName={companyName} filteredProjects={filteredProjects} onNewProject={openModal} />
+      {/* Contenido principal */}
+      <div className={`relative z-10 max-w-7xl mx-auto p-6 ${loading ? 'opacity-50' : 'opacity-100 transition-opacity duration-300'}`}>
+        <ProjectsHeader
+          companyName={companyName}
+          filteredProjects={filteredProjects}
+          onNewProject={openModal}
+        />
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <ProjectSearch
-            searchQuery={searchQuery}
-            onSearchChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <ProjectsList
-            projects={filteredProjects}
-            onEdit={handleEditProject}
-            onDelete={setConfirmDelete}
-          />
+        <ProjectsTabs activeTab={activeTab} handleTabChange={setActiveTab} projectCounts={projectCounts} />
+
+        <div className="bg-white rounded-lg shadow-xl p-8 mt-6">
+          <ProjectSearch searchQuery={searchQuery} onSearchChange={handleSearchChange} />
+          <ProjectsList projects={filteredProjects} onEdit={handleEditProject} onDelete={setConfirmDelete} />
         </div>
       </div>
 
+      {/* Modal de confirmación */}
       {confirmDelete && (
         <ConfirmDeleteModal
           confirmDelete={confirmDelete}
@@ -134,6 +158,7 @@ const Projects = () => {
         />
       )}
 
+      {/* Formulario de proyectos */}
       {isModalOpen && (
         <ProjectForm
           project={newProject}

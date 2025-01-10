@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { NumericFormat } from 'react-number-format';
 
 const FinanceItemForm = ({
   financeItem = {},
@@ -9,40 +10,46 @@ const FinanceItemForm = ({
   isEditing,
 }) => {
   const [errors, setErrors] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
+  const [date, setDate] = useState(financeItem.date || '');
+
+  // Sincronizar fecha con el estado local
+  useEffect(() => {
+    setDate(financeItem.date || '');
+  }, [financeItem]);
 
   const validateForm = () => {
     const newErrors = {};
     if (!financeItem.name) newErrors.name = 'El nombre es obligatorio.';
     if (!financeItem.type) newErrors.type = 'El tipo es obligatorio.';
-    if (!financeItem.projectId) newErrors.projectId = 'El ID del proyecto es obligatorio.';
-    if (!financeItem.frequency) newErrors.frequency = 'La frecuencia es obligatoria.';
     if (!financeItem.amount || financeItem.amount <= 0) newErrors.amount = 'El monto debe ser mayor a cero.';
-    if (!financeItem.date || new Date(financeItem.date) < new Date()) newErrors.date = 'La fecha debe ser hoy o una fecha futura.';
-    return newErrors;
+    if (!date) newErrors.date = 'La fecha es obligatoria.';
+    if (new Date(date) < new Date()) newErrors.date = 'La fecha debe ser hoy o una fecha futura.';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = () => {
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    setErrors({});
-    onSave();
+  const handleSave = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    setIsSaving(true);
+    await onSave();
+    setIsSaving(false);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const parsedValue = ['amount', 'discounts', 'costs', 'income'].includes(name) ? parseFloat(value) : value;
-    onChange({ target: { name, value: parsedValue } });
+    onChange({ target: { name, value } });
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-gradient-to-b from-white to-gray-50 p-6 rounded-lg shadow-2xl max-w-lg w-full transform transition-transform duration-300 scale-95 hover:scale-100">
+      <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-lg">
         <h2 className="text-2xl font-bold mb-4 text-center text-purple-700">
           {isEditing ? 'Actualizar Ítem Financiero' : 'Crear Nuevo Ítem Financiero'}
         </h2>
+
+        {/* Mensajes de error */}
         {Object.keys(errors).length > 0 && (
           <div className="mb-4 text-sm text-red-600 bg-red-100 p-2 rounded-lg" aria-live="assertive">
             {Object.values(errors).map((error, index) => (
@@ -50,114 +57,131 @@ const FinanceItemForm = ({
             ))}
           </div>
         )}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSubmit();
-          }}
-          className="space-y-3"
-        >
-          <div className="grid grid-cols-1 gap-4">
+
+        <form onSubmit={handleSave} className="space-y-3">
+          {/* Nombre */}
+          <div>
+            <label htmlFor="name" className="block text-gray-700 mb-1">Nombre del Ítem</label>
             <input
               type="text"
               name="name"
-              placeholder="Nombre del Ítem *"
+              id="name"
               value={financeItem.name || ''}
               onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Nombre del Ítem"
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.name ? 'border-red-500' : 'border-gray-300'
+              }`}
+              aria-invalid={!!errors.name}
             />
+          </div>
+
+          {/* Tipo */}
+          <div>
+            <label htmlFor="type" className="block text-gray-700 mb-1">Tipo</label>
             <select
               name="type"
+              id="type"
               value={financeItem.type || 'expense'}
               onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Tipo"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             >
               <option value="expense">Gasto</option>
               <option value="income">Ingreso</option>
             </select>
-            <select
-              name="frequency"
-              value={financeItem.frequency || 'one-time'}
-              onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Frecuencia"
-            >
-              <option value="one-time">Único</option>
-              <option value="monthly">Mensual</option>
-              <option value="quarterly">Trimestral</option>
-              <option value="yearly">Anual</option>
-            </select>
-            <input
-              type="number"
+          </div>
+
+          {/* Monto */}
+          <div>
+            <label htmlFor="amount" className="block text-gray-700 mb-1">Monto</label>
+            <NumericFormat
               name="amount"
-              placeholder="Monto *"
+              id="amount"
               value={financeItem.amount || ''}
-              onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Monto"
+              onValueChange={(values) => onChange({ target: { name: 'amount', value: values.value } })}
+              thousandSeparator
+              prefix="$"
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.amount ? 'border-red-500' : 'border-gray-300'
+              }`}
+              aria-invalid={!!errors.amount}
             />
-            <input
-              type="number"
-              name="discounts"
-              placeholder="Descuentos"
-              value={financeItem.discounts || ''}
-              onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Descuentos"
-            />
-            <input
-              type="number"
+          </div>
+
+          {/* Costos */}
+          <div>
+            <label htmlFor="costs" className="block text-gray-700 mb-1">Costos</label>
+            <NumericFormat
               name="costs"
-              placeholder="Costos"
+              id="costs"
               value={financeItem.costs || ''}
-              onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Costos"
+              onValueChange={(values) => onChange({ target: { name: 'costs', value: values.value } })}
+              thousandSeparator
+              prefix="$"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             />
-            <input
-              type="number"
+          </div>
+
+          {/* Ingresos */}
+          <div>
+            <label htmlFor="income" className="block text-gray-700 mb-1">Ingresos</label>
+            <NumericFormat
               name="income"
-              placeholder="Ingresos"
+              id="income"
               value={financeItem.income || ''}
-              onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Ingresos"
+              onValueChange={(values) => onChange({ target: { name: 'income', value: values.value } })}
+              thousandSeparator
+              prefix="$"
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
             />
-            <textarea
-              name="description"
-              placeholder="Descripción (Opcional)"
-              value={financeItem.description || ''}
-              onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Descripción"
-            />
+          </div>
+
+          {/* Fecha */}
+          <div>
+            <label htmlFor="date" className="block text-gray-700 mb-1">Fecha</label>
             <input
               type="date"
               name="date"
-              placeholder="Fecha *"
-              value={financeItem.date || ''}
-              onChange={handleInputChange}
-              className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-              aria-label="Fecha"
+              id="date"
+              value={date}
+              onChange={(e) => {
+                setDate(e.target.value);
+                handleInputChange(e);
+              }}
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.date ? 'border-red-500' : 'border-gray-300'
+              }`}
+              aria-invalid={!!errors.date}
             />
           </div>
-          <div className="mt-4 flex justify-end space-x-2">
+
+          {/* Descripción */}
+          <div>
+            <label htmlFor="description" className="block text-gray-700 mb-1">Descripción</label>
+            <textarea
+              name="description"
+              id="description"
+              value={financeItem.description || ''}
+              onChange={handleInputChange}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+              rows="2"
+            />
+          </div>
+
+          {/* Botones */}
+          <div className="mt-4 flex justify-end gap-3">
             <button
               type="button"
               onClick={onCancel}
-              className="bg-gray-500 text-white px-3 py-2 rounded-lg hover:bg-gray-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
-              aria-label="Cancelar"
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:ring-2 focus:ring-purple-500"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="bg-purple-600 text-white px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
-              aria-label="Guardar"
+              disabled={isSaving}
+              className={`px-4 py-2 ${isSaving ? 'bg-gray-400' : 'bg-purple-500 hover:bg-purple-600'} text-white rounded-lg focus:ring-2 focus:ring-purple-500`}
             >
-              {isEditing ? 'Actualizar' : 'Crear'}
+              {isSaving ? 'Guardando...' : isEditing ? 'Actualizar' : 'Crear'}
             </button>
           </div>
         </form>
@@ -170,14 +194,11 @@ FinanceItemForm.propTypes = {
   financeItem: PropTypes.shape({
     name: PropTypes.string,
     type: PropTypes.string,
-    projectId: PropTypes.string,
-    frequency: PropTypes.string,
     amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    description: PropTypes.string,
-    date: PropTypes.string,
-    discounts: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     costs: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     income: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    date: PropTypes.string,
+    description: PropTypes.string,
   }),
   onChange: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,

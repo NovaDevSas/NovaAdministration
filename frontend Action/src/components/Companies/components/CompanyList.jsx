@@ -7,7 +7,7 @@ const CompanyList = ({ companies, onEdit, onDelete, onRefresh }) => {
     <div className="mt-6">
       {companies.length > 0 ? (
         <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
           role="list"
           aria-label="Lista de empresas"
         >
@@ -34,17 +34,17 @@ const CompanyList = ({ companies, onEdit, onDelete, onRefresh }) => {
         </div>
       ) : (
         <div
-          className="text-center text-gray-500 bg-white py-8 rounded-lg shadow-md border border-gray-200"
+          className="text-center text-gray-600 bg-gradient-to-br from-white to-gray-100 py-8 px-6 rounded-lg shadow-lg border border-gray-300"
           role="alert"
           aria-live="polite"
         >
-          <p className="text-xl font-medium">No hay empresas disponibles</p>
+          <p className="text-xl font-semibold">No hay empresas disponibles</p>
           <p className="text-sm mt-2">
             Puedes añadir una nueva empresa haciendo clic en "Nueva Empresa".
           </p>
           <button
             onClick={onRefresh}
-            className="mt-4 bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="mt-4 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1"
             aria-label="Actualizar lista de empresas"
           >
             Refrescar Lista

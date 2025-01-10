@@ -39,35 +39,27 @@ const FinanceItems = () => {
   const toastId = useRef(null);
 
   useEffect(() => {
-    fetchFinanceItems();
-    fetchCompanyName();
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [items, project] = await Promise.all([
+          getFinanceItems(projectId),
+          getProjectById(projectId),
+        ]);
+        const company = await getCompanyById(project.companyId);
+        setFinanceItems(items);
+        setFilteredItems(items);
+        setCompanyName(company?.name || 'Nombre no disponible');
+      } catch (error) {
+        console.error('Error inicializando datos:', error);
+        toast.error('Error al cargar datos iniciales');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [projectId]);
-
-  const fetchFinanceItems = async () => {
-    setLoading(true);
-    try {
-      const data = await getFinanceItems(projectId);
-      setFinanceItems(data);
-      setFilteredItems(data);
-    } catch (error) {
-      console.error('Error fetching finance items:', error);
-      toast.error('Error al cargar los ítems financieros');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchCompanyName = async () => {
-    try {
-      const project = await getProjectById(projectId);
-      const companyId = project.companyId;
-      const company = await getCompanyById(companyId);
-      setCompanyName(company?.name || 'Nombre no disponible');
-    } catch (error) {
-      console.error('Error fetching company name:', error);
-      setCompanyName('Error al cargar el nombre');
-    }
-  };
 
   useEffect(() => {
     if (financeItems.length > 0 && !toast.isActive(toastId.current)) {
@@ -82,7 +74,8 @@ const FinanceItems = () => {
     setSearchQuery(query);
     setFilteredItems(
       financeItems.filter((item) =>
-        [item.name, item.description].some((field) => field.toLowerCase().includes(query))
+        [item.name, item.description, item.type, item.amount.toString(), item.date]
+          .some((field) => field.toLowerCase().includes(query))
       )
     );
   };
@@ -101,25 +94,20 @@ const FinanceItems = () => {
   const saveFinanceItem = async () => {
     setLoading(true);
     try {
-      // Verificar el objeto financeItem antes de guardar
-      let savedItem;
-      if (editingItem) {
-        savedItem = await updateFinanceItem(financeItem._id, financeItem);
-      } else {
-        savedItem = await createFinanceItem(financeItem);
-      }
-      let updatedItems;
-      if (editingItem) {
-        updatedItems = financeItems.map((item) => (item._id === savedItem._id ? savedItem : item));
-      } else {
-        updatedItems = [...financeItems, savedItem];
-      }
+      const savedItem = editingItem
+        ? await updateFinanceItem(financeItem._id, financeItem)
+        : await createFinanceItem(financeItem);
+      const updatedItems = editingItem
+        ? financeItems.map((item) =>
+            item._id === savedItem._id ? savedItem : item
+          )
+        : [...financeItems, savedItem];
       setFinanceItems(updatedItems);
       setFilteredItems(updatedItems);
       toast.success(editingItem ? 'Ítem actualizado correctamente' : 'Ítem creado correctamente');
       closeModal();
     } catch (error) {
-      console.error('Error saving finance item:', error);
+      console.error('Error al guardar ítem financiero:', error);
       toast.error('Error al guardar el ítem financiero');
     } finally {
       setLoading(false);
@@ -137,7 +125,7 @@ const FinanceItems = () => {
       toast.success('Ítem financiero eliminado correctamente');
       setConfirmDelete(null);
     } catch (error) {
-      console.error('Error deleting finance item:', error);
+      console.error('Error al eliminar ítem financiero:', error);
       toast.error('Error al eliminar el ítem financiero');
     } finally {
       setLoading(false);
@@ -145,7 +133,22 @@ const FinanceItems = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-gray-100 to-gray-200 p-8 relative">
+    <div className="relative min-h-screen bg-gradient-to-br from-green-50 via-white to-gray-200 p-8">
+      <div className="absolute inset-0 pointer-events-none">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1440 320"
+          className="w-full h-full"
+          preserveAspectRatio="none"
+        >
+          <path
+            fill="rgba(198, 239, 206, 0.6)"
+            d="M0,224L48,213.3C96,203,192,181,288,192C384,203,480,245,576,234.7C672,224,768,160,864,133.3C960,107,1056,117,1152,133.3C1248,149,1344,171,1392,181.3L1440,192L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
+          />
+        </svg>
+      </div>
+
+      {/* Botón de regresar */}
       <button
         onClick={() => navigate(-1)}
         className="absolute top-4 left-4 flex items-center justify-center w-10 h-10 bg-purple-500 text-white rounded-full shadow-lg hover:bg-purple-600 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -175,15 +178,14 @@ const FinanceItems = () => {
         </div>
       )}
 
-      <div className={`max-w-7xl mx-auto ${loading ? 'opacity-50' : 'opacity-100 transition-opacity duration-300'}`}>
+      <div className={`relative z-10 max-w-7xl mx-auto ${loading ? 'opacity-50' : 'opacity-100 transition-opacity duration-300'}`}>
         <FinanceItemsHeader openModal={openModal} />
-
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <h2 className="text-2xl font-bold mb-4 text-center text-purple-700">
             Ítems Financieros de {companyName}
           </h2>
           <FinanceItemsSearch searchQuery={searchQuery} handleSearch={handleSearch} />
-          <FinanceItemsList items={filteredItems} onEdit={openModal} onDelete={setConfirmDelete} />
+          <FinanceItemsList financeItems={filteredItems} onEdit={openModal} onDelete={setConfirmDelete} />
         </div>
       </div>
 

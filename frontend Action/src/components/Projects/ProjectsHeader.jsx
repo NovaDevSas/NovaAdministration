@@ -3,13 +3,17 @@ import PropTypes from 'prop-types';
 import { FaPlus } from 'react-icons/fa';
 
 const ProjectsHeader = ({ companyName, filteredProjects = [], onNewProject }) => (
-  <div className="flex flex-col md:flex-row md:justify-between items-center mb-6">
+  <div className="flex flex-col md:flex-row md:justify-between items-center mb-6 gap-4">
     {/* Título y Contador */}
     <div className="text-center md:text-left">
-      <h1 className="text-3xl font-extrabold text-purple-700">
+      <h1 className="text-3xl font-extrabold text-purple-700 tracking-tight drop-shadow-md transition-transform hover:scale-105">
         Proyectos de {companyName}
       </h1>
-      <p className="text-gray-500 text-sm mt-2">
+      <p
+        className="text-gray-500 text-sm mt-2"
+        aria-live="polite"
+        aria-atomic="true"
+      >
         {filteredProjects.length
           ? `${filteredProjects.length} proyecto${filteredProjects.length > 1 ? 's' : ''} encontrado${filteredProjects.length > 1 ? 's' : ''}`
           : 'No se encontraron proyectos.'}

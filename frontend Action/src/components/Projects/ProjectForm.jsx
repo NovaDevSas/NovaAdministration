@@ -5,6 +5,8 @@ import { NumericFormat } from 'react-number-format';
 const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
   const [startDate, setStartDate] = useState(project.startDate || '');
   const [endDate, setEndDate] = useState(project.endDate || '');
+  const [errors, setErrors] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
 
   // Sincronizar fechas con el estado local
   useEffect(() => {
@@ -12,14 +14,22 @@ const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
     setEndDate(project.endDate || '');
   }, [project]);
 
-  const handleDateChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'startDate') {
-      setStartDate(value);
-    } else if (name === 'endDate') {
-      setEndDate(value);
-    }
-    onChange(e);
+  const validateForm = () => {
+    const newErrors = {};
+    if (!project.name) newErrors.name = 'El nombre del proyecto es obligatorio.';
+    if (!project.description) newErrors.description = 'La descripción es obligatoria.';
+    if (new Date(startDate) > new Date(endDate)) newErrors.dates = 'La fecha de inicio no puede ser posterior a la de fin.';
+    if (!project.budget || Number(project.budget) <= 0) newErrors.budget = 'El presupuesto debe ser mayor a 0.';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    setIsSaving(true);
+    await onSave();
+    setIsSaving(false);
   };
 
   return (
@@ -28,15 +38,10 @@ const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
         <h2 className="text-2xl font-bold mb-4 text-center text-purple-700">
           {isEditing ? 'Editar Proyecto' : 'Nuevo Proyecto'}
         </h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSave();
-          }}
-        >
+        <form onSubmit={handleSave}>
           {/* Nombre del Proyecto */}
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="name">
+            <label htmlFor="name" className="block text-gray-700 mb-1">
               Nombre del Proyecto
             </label>
             <input
@@ -45,15 +50,18 @@ const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
               id="name"
               value={project.name}
               onChange={onChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-              required
-              aria-label="Nombre del Proyecto"
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.name ? 'border-red-500' : 'border-gray-300'
+              }`}
+              aria-invalid={!!errors.name}
+              aria-describedby="name-error"
             />
+            {errors.name && <p id="name-error" className="text-red-500 text-sm mt-1">{errors.name}</p>}
           </div>
 
           {/* Descripción */}
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="description">
+            <label htmlFor="description" className="block text-gray-700 mb-1">
               Descripción
             </label>
             <textarea
@@ -61,15 +69,18 @@ const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
               id="description"
               value={project.description}
               onChange={onChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-              required
-              aria-label="Descripción del Proyecto"
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.description ? 'border-red-500' : 'border-gray-300'
+              }`}
+              aria-invalid={!!errors.description}
+              aria-describedby="description-error"
             />
+            {errors.description && <p id="description-error" className="text-red-500 text-sm mt-1">{errors.description}</p>}
           </div>
 
           {/* Fecha de Inicio */}
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="startDate">
+            <label htmlFor="startDate" className="block text-gray-700 mb-1">
               Fecha de Inicio
             </label>
             <input
@@ -77,16 +88,21 @@ const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
               name="startDate"
               id="startDate"
               value={startDate}
-              onChange={handleDateChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-              required
-              aria-label="Fecha de Inicio"
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                onChange(e);
+              }}
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.dates ? 'border-red-500' : 'border-gray-300'
+              }`}
+              aria-invalid={!!errors.dates}
+              aria-describedby="dates-error"
             />
           </div>
 
           {/* Fecha de Fin */}
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="endDate">
+            <label htmlFor="endDate" className="block text-gray-700 mb-1">
               Fecha de Fin
             </label>
             <input
@@ -94,37 +110,43 @@ const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
               name="endDate"
               id="endDate"
               value={endDate}
-              onChange={handleDateChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-              required
-              aria-label="Fecha de Fin"
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                onChange(e);
+              }}
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.dates ? 'border-red-500' : 'border-gray-300'
+              }`}
+              aria-invalid={!!errors.dates}
+              aria-describedby="dates-error"
             />
+            {errors.dates && <p id="dates-error" className="text-red-500 text-sm mt-1">{errors.dates}</p>}
           </div>
 
           {/* Presupuesto */}
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="budget">
+            <label htmlFor="budget" className="block text-gray-700 mb-1">
               Presupuesto
             </label>
             <NumericFormat
               name="budget"
               id="budget"
               value={project.budget}
-              onValueChange={(values) => {
-                const { value } = values;
-                onChange({ target: { name: 'budget', value } });
-              }}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-              required
-              thousandSeparator={true}
-              prefix={'$'}
-              aria-label="Presupuesto del Proyecto"
+              onValueChange={(values) => onChange({ target: { name: 'budget', value: values.value } })}
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.budget ? 'border-red-500' : 'border-gray-300'
+              }`}
+              thousandSeparator
+              prefix="$"
+              aria-invalid={!!errors.budget}
+              aria-describedby="budget-error"
             />
+            {errors.budget && <p id="budget-error" className="text-red-500 text-sm mt-1">{errors.budget}</p>}
           </div>
 
           {/* Estado */}
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2" htmlFor="status">
+            <label htmlFor="status" className="block text-gray-700 mb-1">
               Estado
             </label>
             <select
@@ -133,7 +155,6 @@ const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
               value={project.status}
               onChange={onChange}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
-              required
               aria-label="Estado del Proyecto"
             >
               <option value="active">Activo</option>
@@ -149,16 +170,17 @@ const ProjectForm = ({ project, onChange, onSave, onCancel, isEditing }) => {
               type="button"
               onClick={onCancel}
               className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 focus:ring-2 focus:ring-purple-500 transition"
-              aria-label="Cancelar"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 focus:ring-2 focus:ring-purple-500 transition"
-              aria-label={isEditing ? 'Actualizar Proyecto' : 'Crear Proyecto'}
+              disabled={isSaving}
+              className={`px-4 py-2 ${
+                isSaving ? 'bg-gray-400' : 'bg-purple-500 hover:bg-purple-600'
+              } text-white rounded-lg focus:ring-2 focus:ring-purple-500 transition`}
             >
-              {isEditing ? 'Actualizar' : 'Crear'}
+              {isSaving ? 'Guardando...' : isEditing ? 'Actualizar' : 'Crear'}
             </button>
           </div>
         </form>
