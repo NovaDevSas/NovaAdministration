@@ -3,17 +3,21 @@ const router = express.Router();
 const {
   getProjects,
   getProjectById,
-  getProjectsByCompany, // Asegúrate de importar el controlador correcto
+  getProjectsByCompany,
   createProject,
   updateProject,
   deleteProject,
+  getProjectsWithFinanceSummary
 } = require('../controllers/projectController');
+
+// Obtener proyectos con la suma de ingresos y gastos
+router.get('/summary', getProjectsWithFinanceSummary); // Asegúrate de que esta ruta esté antes de la ruta con ID
 
 // Obtener todos los proyectos
 router.get('/', getProjects);
 
 // Obtener proyectos por ID de empresa
-router.get('/company/:companyId', getProjectsByCompany); // Definir la ruta correcta
+router.get('/company/:companyId', getProjectsByCompany);
 
 // Obtener un proyecto por ID
 router.get('/:id', getProjectById);

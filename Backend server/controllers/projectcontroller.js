@@ -69,3 +69,67 @@ exports.deleteProject = async (req, res) => {
     res.status(500).json({ message: 'Error al eliminar el proyecto', error });
   }
 };
+
+const FinanceItem = require('../models/FinanceItem');
+
+// Obtener proyectos con la suma de ingresos y gastos
+exports.getProjectsWithFinanceSummary = async (req, res) => {
+  try {
+    const projects = await Project.aggregate([
+      {
+        $lookup: {
+          from: 'financeitems', // Asegúrate de que el nombre de la colección esté en minúsculas
+          localField: '_id',
+          foreignField: 'projectId',
+          as: 'financeItems'
+        }
+      },
+      {
+        $addFields: {
+          totalIncome: {
+            $sum: {
+              $map: {
+                input: '$financeItems',
+                as: 'item',
+                in: {
+                  $cond: [{ $eq: ['$$item.type', 'income'] }, '$$item.amount', 0]
+                }
+              }
+            }
+          },
+          totalExpense: {
+            $sum: {
+              $map: {
+                input: '$financeItems',
+                as: 'item',
+                in: {
+                  $cond: [{ $eq: ['$$item.type', 'expense'] }, '$$item.amount', 0]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          startDate: 1,
+          endDate: 1,
+          companyId: 1,
+          status: 1,
+          budget: 1,
+          port: 1,
+          host: 1,
+          subdomain: 1,
+          totalIncome: 1,
+          totalExpense: 1
+        }
+      }
+    ]);
+    res.json(projects);
+  } catch (error) {
+    console.error('Error al obtener el resumen financiero de los proyectos:', error);
+    res.status(500).json({ message: 'Error al obtener el resumen financiero de los proyectos', error });
+  }
+};
