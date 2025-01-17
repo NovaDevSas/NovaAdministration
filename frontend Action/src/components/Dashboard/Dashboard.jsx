@@ -3,6 +3,7 @@ import axios from 'axios';
 import Header from './Header';
 import Chart from './Chart';
 import EditableTable from './EditableTable';
+import PieChart from './PieChart';
 import 'chart.js/auto';
 
 const Dashboard = () => {
@@ -73,7 +74,7 @@ const Dashboard = () => {
 
   const handleEditChange = (index, field, value) => {
     const updatedData = [...editingData];
-    updatedData[index][field] = parseInt(value, 10) || 0; // Validar entradas no numéricas
+    updatedData[index][field] = parseInt(value, 10) || 0;
     setEditingData(updatedData);
 
     const incomeData = updatedData.map((project) => project.totalIncome);
@@ -96,7 +97,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-100 p-8">
       <Header />
       {error ? (
-        <div className="bg-red-100 text-red-800 p-4 rounded-lg">
+        <div className="bg-red-100 text-red-800 p-4 rounded-lg text-center">
           {error}
         </div>
       ) : loading ? (
@@ -105,14 +106,31 @@ const Dashboard = () => {
         </div>
       ) : (
         <>
-          <Chart chartData={chartData} filters={filters} />
-          <EditableTable
-            editingData={editingData}
-            handleEditChange={handleEditChange}
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
-            handlePageChange={handlePageChange}
-          />
+          {/* Gráfico principal */}
+          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <Chart chartData={chartData} filters={filters} />
+          </div>
+
+          {/* Sección de tablas y análisis */}
+          <div className="flex flex-wrap -mx-2">
+            <div className="w-full lg:w-2/3 px-2 mb-4 lg:mb-0">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <EditableTable
+                  editingData={editingData}
+                  handleEditChange={handleEditChange}
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                  handlePageChange={handlePageChange}
+                />
+              </div>
+            </div>
+            <div className="w-full lg:w-1/3 px-2">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h2 className="text-lg font-semibold mb-4 text-center">Proyectos</h2>
+                <PieChart />
+              </div>
+            </div>
+          </div>
         </>
       )}
     </div>

@@ -53,3 +53,29 @@ exports.deleteFinanceItem = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+// Obtener el resumen financiero de un proyecto
+exports.getFinanceSummaryByProject = async (req, res) => {
+  try {
+    console.log(`Fetching finance summary for project ID: ${req.params.projectId}`);
+    const financeItems = await FinanceItem.find({ projectId: req.params.projectId });
+    if (!financeItems || financeItems.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron ítems financieros para este proyecto' });
+    }
+    const summary = financeItems.reduce(
+      (acc, item) => {
+        acc.amount += item.amount || 0;
+        acc.costs += item.costs || 0;
+        acc.income += item.income || 0;
+        return acc;
+      },
+      { amount: 0, costs: 0, income: 0 }
+    );
+    console.log(`Finance summary for project ID: ${req.params.projectId}`, summary);
+    res.json(summary);
+  } catch (err) {
+    console.error('Error al obtener el resumen financiero:', err);
+    res.status(500).json({ message: 'Error al obtener el resumen financiero', error: err.message });
+  }
+};

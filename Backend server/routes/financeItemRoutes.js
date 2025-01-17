@@ -116,4 +116,25 @@ router.put('/:id', financeItemController.updateFinanceItem);
  */
 router.delete('/:id', financeItemController.deleteFinanceItem);
 
+/**
+ * @swagger
+ * /api/finance-items/summary/{projectId}:
+ *   get:
+ *     summary: Obtener el resumen financiero de un proyecto
+ *     tags: [FinanceItems]
+ *     parameters:
+ *       - in: path
+ *         name: projectId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID del proyecto
+ *     responses:
+ *       200:
+ *         description: Resumen financiero obtenido exitosamente
+ *       400:
+ *         description: Error en la solicitud
+ */
+router.get('/summary/:projectId', financeItemController.getFinanceSummaryByProject);
+
 module.exports = router;

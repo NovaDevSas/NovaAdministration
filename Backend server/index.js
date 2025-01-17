@@ -20,6 +20,7 @@ connectDB();
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
+app.use(morgan('dev'));
 
 // Definir un formato personalizado para morgan
 morgan.token('body', (req) => JSON.stringify(req.body));

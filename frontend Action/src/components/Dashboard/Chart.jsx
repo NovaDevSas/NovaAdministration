@@ -51,7 +51,7 @@ const Chart = ({ chartData, filters }) => (
             index === 0 ? filters.showIncome : filters.showExpense
           ).map((dataset) => ({
             ...dataset,
-            barThickness: 20, // Hace las barras más delgadas
+            barThickness: 15, // Ajuste del grosor de las barras
           })),
         }}
         options={{
@@ -67,12 +67,9 @@ const Chart = ({ chartData, filters }) => (
             },
             tooltip: {
               callbacks: {
-                title: function (tooltipItems) {
-                  return `Proyecto: ${tooltipItems[0].label}`;
-                },
-                label: function (tooltipItem) {
-                  return `${tooltipItem.dataset.label}: $${tooltipItem.raw.toLocaleString()}`;
-                },
+                title: (tooltipItems) => `Proyecto: ${tooltipItems[0].label}`,
+                label: (tooltipItem) =>
+                  `${tooltipItem.dataset.label}: $${tooltipItem.raw.toLocaleString()}`,
               },
             },
           },
@@ -100,7 +97,7 @@ const Chart = ({ chartData, filters }) => (
                 text: 'Monto (USD)',
                 font: { size: 14, weight: 'bold' },
               },
-              grid: { borderDash: [5, 5] },
+              grid: { borderDash: [5, 5] }, // Líneas discontinuas
             },
           },
         }}
