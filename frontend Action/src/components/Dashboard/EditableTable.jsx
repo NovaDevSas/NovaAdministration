@@ -19,7 +19,7 @@ const EditableTable = ({ editingData, handleEditChange, currentPage, itemsPerPag
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-xl font-semibold mb-4 text-gray-700">Proyección de prueba por compañías</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-700">Proyección de prueba por proyecto</h2>
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse border border-gray-300">
           <thead className="bg-gray-100">

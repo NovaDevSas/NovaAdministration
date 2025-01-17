@@ -1,4 +1,7 @@
 const Company = require('../models/Company');
+const Project = require('../models/Project'); // Importar el modelo Project
+const FinanceItem = require('../models/FinanceItem'); // Importar el modelo FinanceItem
+
 
 // Obtener todas las empresas
 exports.getCompanies = async (req, res) => {
@@ -24,6 +27,40 @@ exports.getCompanyById = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+// Obtener la lista de compañías con sus ingresos y gastos totales
+exports.getCompaniesFinanceSummary = async (req, res) => {
+  try {
+    const companies = await Company.find();
+    console.log('Companies:', companies);
+
+    const companiesFinanceSummary = await Promise.all(companies.map(async (company) => {
+      const projects = await Project.find({ companyId: company._id });
+      console.log('Projects for company', company._id, ':', projects);
+      const projectIds = projects.map(project => project._id);
+
+      const incomeItems = await FinanceItem.find({ projectId: { $in: projectIds }, type: 'income' });
+      console.log('Income items for company', company._id, ':', incomeItems);
+      const expenseItems = await FinanceItem.find({ projectId: { $in: projectIds }, type: 'expense' });
+      console.log('Expense items for company', company._id, ':', expenseItems);
+
+      const totalIncome = incomeItems.reduce((acc, item) => acc + item.amount, 0);
+      const totalExpenses = expenseItems.reduce((acc, item) => acc + item.amount, 0);
+
+      return {
+        company,
+        totalIncome,
+        totalExpenses
+      };
+    }));
+
+    res.json(companiesFinanceSummary);
+  } catch (err) {
+    console.error('Error al obtener el resumen financiero de las compañías:', err);
+    res.status(500).json({ message: 'Error al obtener el resumen financiero de las compañías', error: err.message });
+  }
+};
+
 
 // Crear una nueva empresa
 exports.addCompany = async (req, res) => {

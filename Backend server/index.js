@@ -8,7 +8,7 @@ const companyRoutes = require('./routes/companyRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const financeItemRoutes = require('./routes/financeItemRoutes');
 const userRoutes = require('./routes/userRoutes');
-const { swaggerUi, specs } = require('./config/swagger'); // Asegúrate de que la ruta sea correcta
+const { swaggerUi, specs } = require('./config/swagger');
 require('dotenv').config();
 
 const app = express();

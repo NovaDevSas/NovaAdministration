@@ -25,6 +25,21 @@ router.get('/', companyController.getCompanies);
 
 /**
  * @swagger
+ * /api/companies/finance-summary:
+ *   get:
+ *     summary: Obtener la lista de compañías con sus ingresos y gastos totales
+ *     tags: [Companies]
+ *     responses:
+ *       200:
+ *         description: Lista de compañías con ingresos y gastos totales obtenida exitosamente
+ *       400:
+ *         description: Error en la solicitud
+ */
+router.get('/finance-summary', companyController.getCompaniesFinanceSummary);
+
+
+/**
+ * @swagger
  * /api/companies/{id}:
  *   get:
  *     summary: Obtener una empresa por ID
@@ -43,6 +58,8 @@ router.get('/', companyController.getCompanies);
  *         description: Error en la solicitud
  */
 router.get('/:id', companyController.getCompanyById);
+
+
 
 /**
  * @swagger

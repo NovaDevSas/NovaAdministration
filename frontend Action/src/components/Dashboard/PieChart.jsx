@@ -94,7 +94,7 @@ const PieChart = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-2xl font-bold text-purple-700 mb-6">Rentabilidad Proyecto</h1>
+      <h1 className="text-2xl font-bold text-purple-700 mb-6">Rentabilidad compañia x Proyecto</h1>
       <CompanyDropdown
         companies={companies}
         selectedCompanyId={selectedCompanyId}
