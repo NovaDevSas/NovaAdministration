@@ -39,7 +39,20 @@ const FodaAnalysis = () => {
             {
               label: 'Ingresos Totales',
               data: incomeData,
-              backgroundColor: 'rgba(75, 192, 192, 0.6)',
+              backgroundColor: [
+                '#4CAF50', // Verde
+                '#36A2EB', // Azul
+                '#FF6384', // Rojo
+                '#FFCE56', // Amarillo
+                '#9966FF', // Morado
+              ],
+              hoverBackgroundColor: [
+                '#388E3C', // Verde más oscuro
+                '#0288D1', // Azul más oscuro
+                '#D32F2F', // Rojo más oscuro
+                '#FBC02D', // Amarillo más oscuro
+                '#7B1FA2', // Morado más oscuro
+              ],
             },
           ],
         });
@@ -56,11 +69,15 @@ const FodaAnalysis = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="text-red-500 text-center">{error}</div>;
   }
 
   return (
