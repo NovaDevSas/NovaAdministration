@@ -2,9 +2,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Header from './Header';
 import Chart from './Charts/Chart';
-import EditableTable from './Tables/EditableTable';
 import PieChart from './Charts/PieChart';
 import FodaAnalysis from './Analysis/FodaAnalysis';
+import Tabs from './Tabs';
 import 'chart.js/auto';
 
 const Dashboard = () => {
@@ -73,29 +73,40 @@ const Dashboard = () => {
     fetchData();
   }, [fetchData]);
 
-  const handleEditChange = (index, field, value) => {
-    const updatedData = [...editingData];
-    updatedData[index][field] = parseInt(value, 10) || 0;
-    setEditingData(updatedData);
-
-    const incomeData = updatedData.map((project) => project.totalIncome);
-    const expenseData = updatedData.map((project) => project.totalExpense);
-
-    setChartData((prevData) => ({
-      ...prevData,
-      datasets: [
-        { ...prevData.datasets[0], data: incomeData },
-        { ...prevData.datasets[1], data: expenseData },
-      ],
-    }));
-  };
-
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage);
   };
 
+  const tabs = [
+    {
+      label: 'Gráfico Principal',
+      content: (
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+          <Chart chartData={chartData} filters={filters} />
+        </div>
+      ),
+    },
+    {
+      label: 'Proyectos',
+      content: (
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-lg font-semibold mb-4 text-center">Proyectos</h2>
+          <PieChart />
+        </div>
+      ),
+    },
+    {
+      label: 'Análisis FODA',
+      content: (
+        <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+          <FodaAnalysis />
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-8">
       <Header />
       {error ? (
         <div className="bg-red-100 text-red-800 p-4 rounded-lg text-center">
@@ -106,38 +117,7 @@ const Dashboard = () => {
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
         </div>
       ) : (
-        <>
-          {/* Gráfico principal */}
-          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-            <Chart chartData={chartData} filters={filters} />
-          </div>
-
-          {/* Sección de tablas y análisis */}
-          <div className="flex flex-wrap -mx-2">
-            <div className="w-full lg:w-2/3 px-2 mb-4 lg:mb-0">
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <EditableTable
-                  editingData={editingData}
-                  handleEditChange={handleEditChange}
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  handlePageChange={handlePageChange}
-                />
-              </div>
-            </div>
-            <div className="w-full lg:w-1/3 px-2">
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h2 className="text-lg font-semibold mb-4 text-center">Proyectos</h2>
-                <PieChart />
-              </div>
-            </div>
-          </div>
-
-          {/* Análisis FODA */}
-          <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-            <FodaAnalysis />
-          </div>
-        </>
+        <Tabs tabs={tabs} />
       )}
     </div>
   );
