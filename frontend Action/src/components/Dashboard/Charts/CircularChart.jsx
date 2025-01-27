@@ -7,14 +7,14 @@ import { Chart as ChartJS } from 'chart.js';
 ChartJS.register(ChartDataLabels);
 
 const CircularChart = ({ chartData, loading }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md flex justify-center items-center">
+  <div className="bg-white p-6 rounded-lg shadow-lg flex justify-center items-center">
     {loading ? (
       <div className="flex flex-col justify-center items-center">
         <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
-        <p className="mt-4 text-gray-600">Cargando datos...</p>
+        <p className="mt-4 text-gray-600 text-sm">Cargando datos...</p>
       </div>
     ) : chartData.labels.length > 0 ? (
-      <div className="w-[300px] h-[300px]">
+      <div className="w-full h-full max-w-[400px] max-h-[400px]">
         <Pie
           data={chartData}
           options={{
@@ -25,9 +25,10 @@ const CircularChart = ({ chartData, loading }) => (
                 position: 'bottom',
                 labels: {
                   font: {
-                    size: 12,
+                    size: 14,
                   },
-                  padding: 10,
+                  padding: 15,
+                  color: '#4B5563', // Gris oscuro para mejor contraste
                 },
               },
               tooltip: {
@@ -35,10 +36,18 @@ const CircularChart = ({ chartData, loading }) => (
                   label: (tooltipItem) =>
                     `${tooltipItem.label}: $${tooltipItem.raw.toLocaleString()}`,
                 },
+                backgroundColor: '#1F2937', // Fondo oscuro
+                titleFont: {
+                  size: 14,
+                  weight: 'bold',
+                },
+                bodyFont: {
+                  size: 12,
+                },
               },
               datalabels: {
                 display: true,
-                color: '#fff',
+                color: '#000',
                 backgroundColor: (context) =>
                   context.dataset.backgroundColor[context.dataIndex],
                 borderRadius: 5,
@@ -46,7 +55,7 @@ const CircularChart = ({ chartData, loading }) => (
                   weight: 'bold',
                   size: 12,
                 },
-                padding: 6,
+                padding: 8,
                 formatter: (value) => `$${value.toLocaleString()}`,
               },
             },

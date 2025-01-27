@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Header from './Header';
 import Chart from './Charts/Chart';
-import EditableTable from './Tables/EditableTable';
 import PieChart from './Charts/PieChart';
 import FodaAnalysis from './Analysis/FodaAnalysis';
 import Tabs from './Tabs';
@@ -74,30 +73,13 @@ const Dashboard = () => {
     fetchData();
   }, [fetchData]);
 
-  const handleEditChange = (index, field, value) => {
-    const updatedData = [...editingData];
-    updatedData[index][field] = parseInt(value, 10) || 0;
-    setEditingData(updatedData);
-
-    const incomeData = updatedData.map((project) => project.totalIncome);
-    const expenseData = updatedData.map((project) => project.totalExpense);
-
-    setChartData((prevData) => ({
-      ...prevData,
-      datasets: [
-        { ...prevData.datasets[0], data: incomeData },
-        { ...prevData.datasets[1], data: expenseData },
-      ],
-    }));
-  };
-
   const handlePageChange = (selectedPage) => {
     setCurrentPage(selectedPage);
   };
 
   const tabs = [
     {
-      label: 'Control de proyectos',
+      label: 'Gráfico Principal',
       content: (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
           <Chart chartData={chartData} filters={filters} />
@@ -105,7 +87,7 @@ const Dashboard = () => {
       ),
     },
     {
-      label: 'Proyectos x empresa',
+      label: 'Proyectos',
       content: (
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-lg font-semibold mb-4 text-center">Proyectos</h2>
@@ -114,7 +96,7 @@ const Dashboard = () => {
       ),
     },
     {
-      label: 'Estudio general de Empresas',
+      label: 'Análisis FODA',
       content: (
         <div className="bg-white p-6 rounded-lg shadow-md mt-6">
           <FodaAnalysis />
@@ -124,7 +106,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 p-8">
       <Header />
       {error ? (
         <div className="bg-red-100 text-red-800 p-4 rounded-lg text-center">
