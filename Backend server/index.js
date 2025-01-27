@@ -8,6 +8,7 @@ const companyRoutes = require('./routes/companyRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const financeItemRoutes = require('./routes/financeItemRoutes');
 const userRoutes = require('./routes/userRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 const { swaggerUi, specs } = require('./config/swagger');
 require('dotenv').config();
 
@@ -32,6 +33,7 @@ app.use('/api/companies', companyRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/finance-items', financeItemRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Documentación Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
