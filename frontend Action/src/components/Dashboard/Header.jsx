@@ -6,7 +6,7 @@ const Header = () => (
   <header className="bg-white p-6 rounded-lg shadow-md mb-6 flex justify-center items-center">
     {/* Título principal y navegación centrada */}
     <div className="flex items-center space-x-6">
-      <h1 className="text-2xl font-bold text-purple-700">Análisis de Compañías</h1>
+      <h1 className="text-2xl font-bold text-purple-700">Análisis de projecto</h1>
 
       <Link
         to="/home"

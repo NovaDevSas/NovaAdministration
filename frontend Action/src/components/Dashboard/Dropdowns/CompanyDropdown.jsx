@@ -18,17 +18,14 @@ const CompanyDropdown = ({ companies, selectedCompanyId, handleCompanyChange, is
         } border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md`}
         aria-label="Selector de Compañías"
       >
-        {isLoading ? (
-          <option>Cargando compañías...</option>
-        ) : companies.length === 0 ? (
-          <option>No hay compañías disponibles</option>
-        ) : (
-          companies.map((company) => (
-            <option key={company._id} value={company._id}>
-              {company.name}
-            </option>
-          ))
-        )}
+        <option value="" disabled>
+          {isLoading ? 'Cargando compañías...' : 'Selecciona una compañía'}
+        </option>
+        {companies.map((company) => (
+          <option key={company._id} value={company._id}>
+            {company.name}
+          </option>
+        ))}
       </select>
     </div>
   </div>

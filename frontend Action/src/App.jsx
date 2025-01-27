@@ -7,7 +7,7 @@ import ForgotPasswordPage from './components/ForgotPassword/ForgotPasswordPage';
 import ResetPassword from './components/Auth/ResetPassword';
 import MosaicPage from './components/Mosaic/MosaicPage';
 import Dashboard from './components/Dashboard/Dashboard';
-import PieChart from './components/Dashboard/PieChart';
+import PieChart from './components/Dashboard/Charts/PieChart'; // Actualizar la ruta de importación
 import Reports from './components/Reports/Reports';
 import Companies from './components/Companies/Companies';
 import Projects from './components/Projects/Projects';

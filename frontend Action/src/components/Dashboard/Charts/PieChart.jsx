@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { getProjectsByCompany } from '../../services/projectService';
-import { getCompanies } from '../../services/companyService';
-import CompanyDropdown from './CompanyDropdown';
-import ProjectDropdown from './ProjectDropdown';
+import { getProjectsByCompany } from '../../../services/projectService';
+import { getCompanies } from '../../../services/companyService';
+import CompanyDropdown from '../Dropdowns/CompanyDropdown';
+import ProjectDropdown from '../Dropdowns/ProjectDropdown';
 import CircularChart from './CircularChart';
 
 const PieChart = () => {

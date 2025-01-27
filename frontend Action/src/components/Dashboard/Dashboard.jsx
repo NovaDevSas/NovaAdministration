@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Header from './Header';
-import Chart from './Chart';
-import EditableTable from './EditableTable';
-import PieChart from './PieChart';
+import Chart from './Charts/Chart';
+import EditableTable from './Tables/EditableTable';
+import PieChart from './Charts/PieChart';
+import FodaAnalysis from './Analysis/FodaAnalysis';
 import 'chart.js/auto';
 
 const Dashboard = () => {
@@ -130,6 +131,11 @@ const Dashboard = () => {
                 <PieChart />
               </div>
             </div>
+          </div>
+
+          {/* Análisis FODA */}
+          <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+            <FodaAnalysis />
           </div>
         </>
       )}
