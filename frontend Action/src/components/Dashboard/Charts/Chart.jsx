@@ -2,7 +2,7 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 
 const Chart = ({ chartData, filters }) => (
-  <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+  <div className="bg-white p-6 rounded-lg shadow-lg mb-6 transition-shadow duration-300 hover:shadow-xl">
     {/* Resumen */}
     <div className="grid grid-cols-3 gap-4 mb-6">
       <div className="flex flex-col items-center">
