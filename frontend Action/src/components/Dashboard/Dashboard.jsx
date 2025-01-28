@@ -79,7 +79,7 @@ const Dashboard = () => {
 
   const tabs = [
     {
-      label: 'Gráfico Principal',
+      label: 'Balance de Projectos',
       content: (
         <div className="bg-white p-6 rounded-lg shadow-md mb-6">
           <Chart chartData={chartData} filters={filters} />
@@ -96,7 +96,7 @@ const Dashboard = () => {
       ),
     },
     {
-      label: 'Análisis FODA',
+      label: 'Análisis Por Empresas',
       content: (
         <div className="bg-white p-6 rounded-lg shadow-md mt-6">
           <FodaAnalysis />
