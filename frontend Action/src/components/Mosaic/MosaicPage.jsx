@@ -4,6 +4,7 @@ import Card from './Card';
 import DashboardIcon from '../../assets/icons/DashboardIcon';
 import ReportsIcon from '../../assets/icons/ReportsIcon';
 import CompanyIcon from '../../assets/icons/CompanyIcon';
+import ProjectsIcon from '../../assets/icons/ProjectsIcon';
 import { FaSignOutAlt } from 'react-icons/fa';
 
 const MosaicPage = () => {
@@ -31,6 +32,12 @@ const MosaicPage = () => {
       path: '/companies',
       color: '#1E90FF',
       IconComponent: CompanyIcon,
+    },{
+      name: 'Tareas',
+      description: 'Gestión de proyectos',
+      path: '/projects',
+      color: '#FFA500',
+      IconComponent: ProjectsIcon,
     },
   ];
 
@@ -118,7 +125,7 @@ const MosaicPage = () => {
       </header>
 
       {/* Tarjetas individuales */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 px-8 z-20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-8 z-20">
         {applications.map((app) => (
           <Card
             key={app.name}

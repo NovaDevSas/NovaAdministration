@@ -2,6 +2,11 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_BASE_URL + '/projects';
 
+const getProjects = async () => {
+  const response = await axios.get(API_URL);
+  return response.data;
+};
+
 const getProjectsByCompany = async (companyId) => {
   const response = await axios.get(`${API_URL}/company/${companyId}`);
   return response.data;
@@ -28,6 +33,7 @@ const deleteProject = async (id) => {
 };
 
 export {
+  getProjects,
   getProjectsByCompany,
   getProjectById,
   createProject,

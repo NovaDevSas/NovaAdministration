@@ -7,10 +7,10 @@ import ForgotPasswordPage from './components/ForgotPassword/ForgotPasswordPage';
 import ResetPassword from './components/Auth/ResetPassword';
 import MosaicPage from './components/Mosaic/MosaicPage';
 import Dashboard from './components/Dashboard/Dashboard';
-import PieChart from './components/Dashboard/Charts/PieChart'; // Actualizar la ruta de importación
+import PieChart from './components/Dashboard/Charts/PieChart';
 import Reports from './components/Reports/Reports';
 import Companies from './components/Companies/Companies';
-import Projects from './components/Projects/Projects';
+import Tasks from './components/Task/Tasks';
 import FinanceItems from './components/FinanceItems/FinanceItems';
 
 const App = () => {
@@ -27,7 +27,7 @@ const App = () => {
         <Route path="/pie-chart" element={<PieChart />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/companies" element={<Companies />} />
-        <Route path="/projects/:companyId" element={<Projects />} />
+        <Route path="/projects" element={<Tasks />} />
         <Route path="/finance-items/:projectId" element={<FinanceItems />} />
       </Routes>
     </Router>
