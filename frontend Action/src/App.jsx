@@ -8,7 +8,6 @@ import ResetPassword from './components/Auth/ResetPassword';
 import MosaicPage from './components/Mosaic/MosaicPage';
 import Dashboard from './components/Dashboard/Dashboard';
 import PieChart from './components/Dashboard/Charts/PieChart';
-import Reports from './components/Reports/Reports';
 import Companies from './components/Companies/Companies';
 import Tasks from './components/Task/Tasks';
 import FinanceItems from './components/FinanceItems/FinanceItems';
@@ -25,7 +24,6 @@ const App = () => {
         <Route path="/home" element={<MosaicPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/pie-chart" element={<PieChart />} />
-        <Route path="/reports" element={<Reports />} />
         <Route path="/companies" element={<Companies />} />
         <Route path="/projects" element={<Tasks />} />
         <Route path="/finance-items/:projectId" element={<FinanceItems />} />
