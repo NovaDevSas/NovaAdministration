@@ -9,8 +9,12 @@ import MosaicPage from './components/Mosaic/MosaicPage';
 import Dashboard from './components/Dashboard/Dashboard';
 import PieChart from './components/Dashboard/Charts/PieChart';
 import Companies from './components/Companies/Companies';
-import Tasks from './components/Task/Tasks';
+import Tasks from './components/Reports/Tasks/Tasks';
 import FinanceItems from './components/FinanceItems/FinanceItems';
+import Reports from './components/Reports/Reports';
+import Projects from './components/Reports/projects/Projects';
+import Finance from './components/Reports/Finance/Finance';
+import Files from './components/Reports/Files/Files';
 
 const App = () => {
   return (
@@ -27,6 +31,11 @@ const App = () => {
         <Route path="/companies" element={<Companies />} />
         <Route path="/projects" element={<Tasks />} />
         <Route path="/finance-items/:projectId" element={<FinanceItems />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/reports/projects" element={<Projects />} />
+        <Route path="/reports/tasks" element={<Tasks />} />
+        <Route path="/reports/finance" element={<Finance />} />
+        <Route path="/reports/files" element={<Files />} />
       </Routes>
     </Router>
   );

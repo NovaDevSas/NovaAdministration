@@ -1,6 +1,7 @@
-import React from "react";
+// filepath: /c:/Proyectos/projectgithub/NovaAdministration/frontend Action/src/assets/icons/ProjectsIcon.jsx
+import React from 'react';
 
-const ProjectsIcon = ({ size = 24, color = "currentColor", title = "Projects Icon" }) => (
+const ProjectsIcon = ({ size = 24, color = 'currentColor', title = 'Projects Icon' }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
