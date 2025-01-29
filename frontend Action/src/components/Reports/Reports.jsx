@@ -9,10 +9,11 @@ import CompaniesIcon from "../../assets/icons/CompaniesIcon";
 
 const Reports = () => {
   const navigate = useNavigate();
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const downloadPDF = async (path) => {
     try {
-      const response = await axios.get(`/api${path}/download/pdf`, { responseType: 'blob' });
+      const response = await axios.get(`${API_BASE_URL}${path}/download/pdf`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -26,7 +27,7 @@ const Reports = () => {
 
   const downloadExcel = async (path) => {
     try {
-      const response = await axios.get(`/api${path}/download/excel`, { responseType: 'blob' });
+      const response = await axios.get(`${API_BASE_URL}${path}/download/excel`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
