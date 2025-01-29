@@ -1,12 +1,29 @@
 const express = require('express');
+const { body } = require('express-validator');
+const validateRequest = require('../middleware/validateRequest');
+const { registerUser, loginUser } = require('../controllers/authController');
+
 const router = express.Router();
-const authController = require('../controllers/authController');
+
+// Validaciones
+const validateRegister = [
+  body('name').notEmpty().withMessage('El nombre es obligatorio'),
+  body('email').isEmail().withMessage('El correo electrónico no es válido'),
+  body('password')
+    .isLength({ min: 6 })
+    .withMessage('La contraseña debe tener al menos 6 caracteres'),
+];
+
+const validateLogin = [
+  body('email').isEmail().withMessage('El correo electrónico no es válido'),
+  body('password').notEmpty().withMessage('La contraseña es obligatoria'),
+];
 
 /**
  * @swagger
  * tags:
  *   name: Auth
- *   description: Endpoints para autenticación
+ *   description: Autenticación de usuarios
  */
 
 /**
@@ -20,80 +37,41 @@ const authController = require('../controllers/authController');
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - username
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *               username:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/User'
  *     responses:
- *       200:
+ *       201:
  *         description: Usuario registrado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Error en la solicitud
+ *         description: Error al registrar el usuario
  */
-router.post('/register', authController.register);
+router.post('/register', validateRegister, validateRequest, registerUser);
 
 /**
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Iniciar sesión
+ *     summary: Iniciar sesión de usuario
  *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
+ *             $ref: '#/components/schemas/User'
  *     responses:
  *       200:
- *         description: Inicio de sesión exitoso
- *       400:
- *         description: Credenciales inválidas
+ *         description: Usuario autenticado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Credenciales no válidas
  */
-router.post('/login', authController.login);
-
-/**
- * @swagger
- * /api/auth/reset-password:
- *   post:
- *     summary: Restablecer contraseña
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - newPassword
- *             properties:
- *               email:
- *                 type: string
- *               newPassword:
- *                 type: string
- *     responses:
- *       200:
- *         description: Contraseña restablecida exitosamente
- *       400:
- *         description: Error en la solicitud
- */
-router.post('/reset-password', authController.resetPassword);
+router.post('/login', validateLogin, validateRequest, loginUser);
 
 module.exports = router;
