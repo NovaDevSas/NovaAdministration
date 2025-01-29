@@ -35,7 +35,7 @@ const MosaicPage = () => {
     },{
       name: 'Tareas',
       description: 'Gestión de proyectos',
-      path: '/projects',
+      path: '/Tasks',
       color: '#FFA500',
       IconComponent: ProjectsIcon,
     },

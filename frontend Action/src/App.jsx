@@ -9,12 +9,16 @@ import MosaicPage from './components/Mosaic/MosaicPage';
 import Dashboard from './components/Dashboard/Dashboard';
 import PieChart from './components/Dashboard/Charts/PieChart';
 import Companies from './components/Companies/Companies';
-import Tasks from './components/Reports/Tasks/Tasks';
+import ReportTasks from './components/Reports/Tasks/ReportTasks';
 import FinanceItems from './components/FinanceItems/FinanceItems';
 import Reports from './components/Reports/Reports';
-import Projects from './components/Reports/projects/Projects';
+import Projects from './components/Projects/Projects';
 import Finance from './components/Reports/Finance/Finance';
-import Files from './components/Reports/Files/Files';
+import CompaniesReport from './components/Reports/CompaniesReport/CompaniesReport'; // Importar el nuevo componente
+import Tasks from './components/Task/Tasks';
+import ReportProjects  from './components/Reports/projects/Projects';
+
+
 
 const App = () => {
   return (
@@ -29,13 +33,14 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/pie-chart" element={<PieChart />} />
         <Route path="/companies" element={<Companies />} />
-        <Route path="/projects" element={<Tasks />} />
+        <Route path="/Tasks" element={<Tasks />} />
         <Route path="/finance-items/:projectId" element={<FinanceItems />} />
         <Route path="/reports" element={<Reports />} />
-        <Route path="/reports/projects" element={<Projects />} />
-        <Route path="/reports/tasks" element={<Tasks />} />
+        <Route path="/reports/projects" element={<ReportProjects />} />
+        <Route path="/reports/tasks" element={<ReportTasks />} />
         <Route path="/reports/finance" element={<Finance />} />
-        <Route path="/reports/files" element={<Files />} />
+        <Route path="/projects/:companyId" element={<Projects />} /> {/* Nueva ruta */}
+        <Route path="/reports/companies" element={<CompaniesReport />} /> {/* Nueva ruta */}
       </Routes>
     </Router>
   );

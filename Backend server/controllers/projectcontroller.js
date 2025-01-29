@@ -1,4 +1,6 @@
 const Project = require('../models/Project');
+const { generatePDF, generateExcel } = require('../utils/exportUtils');
+
 
 // Obtener todos los proyectos
 exports.getProjects = async (req, res) => {
@@ -131,5 +133,30 @@ exports.getProjectsWithFinanceSummary = async (req, res) => {
   } catch (error) {
     console.error('Error al obtener el resumen financiero de los proyectos:', error);
     res.status(500).json({ message: 'Error al obtener el resumen financiero de los proyectos', error });
+  }
+};
+// Descargar proyectos en PDF
+exports.downloadProjectsPDF = async (req, res) => {
+  try {
+    const projects = await Project.find();
+    const pdfBuffer = await generatePDF(projects, 'projects');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=projects.pdf');
+    res.send(pdfBuffer);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al descargar los proyectos en PDF', error });
+  }
+};
+
+// Descargar proyectos en Excel
+exports.downloadProjectsExcel = async (req, res) => {
+  try {
+    const projects = await Project.find();
+    const excelBuffer = await generateExcel(projects, 'projects');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=projects.xlsx');
+    res.send(excelBuffer);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al descargar los proyectos en Excel', error });
   }
 };

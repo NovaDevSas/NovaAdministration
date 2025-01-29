@@ -15,4 +15,10 @@ router.get('/project/:projectId', taskController.getTasksByProject);
 // Obtener tareas por responsable
 router.get('/user/:userId', taskController.getTasksByUser);
 
+// Descargar tareas en PDF
+router.get('/download/pdf', taskController.downloadTasksPDF);
+
+// Descargar tareas en Excel
+router.get('/download/excel', taskController.downloadTasksExcel);
+
 module.exports = router;

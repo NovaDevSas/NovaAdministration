@@ -7,7 +7,9 @@ const {
   createProject,
   updateProject,
   deleteProject,
-  getProjectsWithFinanceSummary
+  getProjectsWithFinanceSummary,
+  downloadProjectsPDF,
+  downloadProjectsExcel
 } = require('../controllers/projectController');
 
 // Obtener proyectos con la suma de ingresos y gastos
@@ -30,5 +32,11 @@ router.put('/:id', updateProject);
 
 // Eliminar un proyecto
 router.delete('/:id', deleteProject);
+
+// Descargar proyectos en PDF
+router.get('/download/pdf', downloadProjectsPDF);
+
+// Descargar proyectos en Excel
+router.get('/download/excel', downloadProjectsExcel);
 
 module.exports = router;

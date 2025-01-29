@@ -1,5 +1,6 @@
 const Task = require('../models/Task');
 const Project = require('../models/Project');
+const { generatePDF, generateExcel } = require('../utils/exportUtils');
 
 // Crear una nueva tarea
 exports.createTask = async (req, res) => {
@@ -84,5 +85,30 @@ exports.getTasksByUser = async (req, res) => {
     res.json(tasks);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+// Descargar tareas en PDF
+exports.downloadTasksPDF = async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    const pdfBuffer = await generatePDF(tasks, 'tasks');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=tasks.pdf');
+    res.send(pdfBuffer);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al descargar las tareas en PDF', error: err.message });
+  }
+};
+
+// Descargar tareas en Excel
+exports.downloadTasksExcel = async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    const excelBuffer = await generateExcel(tasks, 'tasks');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=tasks.xlsx');
+    res.send(excelBuffer);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al descargar las tareas en Excel', error: err.message });
   }
 };
