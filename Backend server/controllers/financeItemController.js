@@ -1,4 +1,15 @@
 const FinanceItem = require('../models/FinanceItem');
+const { generatePDF, generateExcel } = require('../utils/exportUtils');
+
+// Obtener todos los ítems financieros
+exports.getAllFinanceItems = async (req, res) => {
+  try {
+    const financeItems = await FinanceItem.find();
+    res.json(financeItems);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 // Obtener todos los ítems financieros de un proyecto
 exports.getFinanceItemsByProject = async (req, res) => {
@@ -54,7 +65,6 @@ exports.deleteFinanceItem = async (req, res) => {
   }
 };
 
-
 // Obtener el resumen financiero de un proyecto
 exports.getFinanceSummaryByProject = async (req, res) => {
   try {
@@ -77,5 +87,31 @@ exports.getFinanceSummaryByProject = async (req, res) => {
   } catch (err) {
     console.error('Error al obtener el resumen financiero:', err);
     res.status(500).json({ message: 'Error al obtener el resumen financiero', error: err.message });
+  }
+};
+
+// Descargar ítems financieros en PDF
+exports.downloadFinanceItemsPDF = async (req, res) => {
+  try {
+    const financeItems = await FinanceItem.find();
+    const pdfBuffer = await generatePDF(financeItems, 'financeItems');
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=financeItems.pdf');
+    res.send(pdfBuffer);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al descargar los ítems financieros en PDF', error: err.message });
+  }
+};
+
+// Descargar ítems financieros en Excel
+exports.downloadFinanceItemsExcel = async (req, res) => {
+  try {
+    const financeItems = await FinanceItem.find();
+    const excelBuffer = await generateExcel(financeItems, 'financeItems');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=financeItems.xlsx');
+    res.send(excelBuffer);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al descargar los ítems financieros en Excel', error: err.message });
   }
 };

@@ -137,4 +137,13 @@ router.delete('/:id', financeItemController.deleteFinanceItem);
  */
 router.get('/summary/:projectId', financeItemController.getFinanceSummaryByProject);
 
+// Obtener todos los ítems financieros
+router.get('/', financeItemController.getAllFinanceItems);
+
+// Descargar ítems financieros en PDF
+router.get('/download/pdf', financeItemController.downloadFinanceItemsPDF);
+
+// Descargar ítems financieros en Excel
+router.get('/download/excel', financeItemController.downloadFinanceItemsExcel);
+
 module.exports = router;

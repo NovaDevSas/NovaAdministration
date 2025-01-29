@@ -11,23 +11,31 @@ const Reports = () => {
   const navigate = useNavigate();
 
   const downloadPDF = async (path) => {
-    const response = await axios.get(`/api${path}/download/pdf`, { responseType: 'blob' });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `${path.split('/').pop()}.pdf`);
-    document.body.appendChild(link);
-    link.click();
+    try {
+      const response = await axios.get(`/api${path}/download/pdf`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${path.split('/').pop()}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+    }
   };
 
   const downloadExcel = async (path) => {
-    const response = await axios.get(`/api${path}/download/excel`, { responseType: 'blob' });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `${path.split('/').pop()}.xlsx`);
-    document.body.appendChild(link);
-    link.click();
+    try {
+      const response = await axios.get(`/api${path}/download/excel`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${path.split('/').pop()}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error downloading Excel:', error);
+    }
   };
 
   const reports = [
@@ -135,18 +143,18 @@ const Reports = () => {
               onClick={() => navigate(`/reports${report.path}`)}
               className="flex flex-col items-center justify-center shadow-lg rounded-xl bg-gradient-to-b from-white to-gray-100 p-8 hover:shadow-2xl hover:scale-105 transition-all duration-300"
             />
-            <div className="absolute top-4 right-4 flex space-x-2">
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between space-x-2">
               <button
                 onClick={() => downloadPDF(report.path)}
-                className="bg-blue-500 text-white px-2 py-1 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
               >
-                PDF
+                Download PDF
               </button>
               <button
                 onClick={() => downloadExcel(report.path)}
-                className="bg-green-500 text-white px-2 py-1 rounded-lg shadow-md hover:bg-green-600 transition duration-300"
+                className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition duration-300"
               >
-                Excel
+                Download Excel
               </button>
             </div>
           </div>
