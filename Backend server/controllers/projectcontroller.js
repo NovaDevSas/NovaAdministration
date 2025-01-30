@@ -2,7 +2,7 @@ const Project = require('../models/Project');
 const { generatePDF, generateExcel } = require('../utils/exportUtils');
 
 
-// Obtener todos los proyectos
+// Obtener todos los proyectos .)
 exports.getProjects = async (req, res) => {
   try {
     const projects = await Project.find();
