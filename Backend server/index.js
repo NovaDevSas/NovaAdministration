@@ -23,9 +23,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-// Definir un formato personalizado para morgan
-morgan.token('body', (req) => JSON.stringify(req.body));
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
+
 
 // Rutas
 app.use('/api/auth', authRoutes);

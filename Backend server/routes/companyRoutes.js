@@ -137,4 +137,10 @@ router.put('/:id', companyController.updateCompany);
  */
 router.delete('/:id', companyController.deleteCompany);
 
+// Descargar ítems financieros en PDF
+router.get('/download/pdf', companyController.downloadCompaniesPDF);
+
+// Descargar ítems financieros en Excel
+router.get('/download/excel', companyController.downloadCompaniesExcel);
+
 module.exports = router;

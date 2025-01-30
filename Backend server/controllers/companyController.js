@@ -104,3 +104,77 @@ exports.deleteCompany = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+
+// Descargar ítems financieros en PDF
+exports.downloadCompaniesPDF = async (req, res) => {
+  try {
+    console.log("Generating PDF for finance items...");
+    const financeItems = await Company.find();
+
+    if (!financeItems || financeItems.length === 0) {
+      console.log("No finance items found for PDF export.");
+      return res.status(404).json({ message: 'No hay ítems financieros disponibles para exportar' });
+    }
+
+    console.log("Sanitizing finance items for PDF...");
+    const sanitizedFinanceItems = financeItems.map(item => ({
+      name: item.name || 'N/A',
+      contact: item.type || 'N/A',
+      status: item.type || 'N/A',
+      code: item.type || 'N/A',
+      nit: item.type || 'N/A',
+      email: item.type || 'N/A',
+      address: item.type || 'N/A'
+    }));
+
+    const pdfBuffer = await generatePDF(sanitizedFinanceItems, 'financeItems');
+
+    if (!pdfBuffer) {
+      throw new Error("Failed to generate PDF buffer.");
+    }
+    console.log("PDF generated successfully.");
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="financeItems.pdf"');
+    res.send(pdfBuffer);
+  } catch (err) {
+    console.error("Error downloading finance items PDF:", err);
+    res.status(500).json({ message: 'Error al descargar los ítems financieros en PDF', error: err.message });
+  }
+};
+
+// Descargar ítems financieros en Excel
+exports.downloadCompaniesExcel = async (req, res) => {
+  try {
+    console.log("Generating Excel for finance items...");
+    const financeItems = await Company.find();
+
+    if (!financeItems || financeItems.length === 0) {
+      console.log("No finance items found for Excel export.");
+      return res.status(404).json({ message: 'No hay ítems financieros disponibles para exportar' });
+    }
+
+    console.log("Sanitizing finance items for Excel...");
+    const sanitizedFinanceItems = financeItems.map(item => ({
+      name: item.name || 'N/A',
+      type: item.type || 'N/A',
+      amount: item.amount || 0,
+      date: item.date || new Date().toISOString(),
+      description: item.description || 'Sin descripción'
+    }));
+
+    const excelBuffer = await generateExcel(sanitizedFinanceItems, 'financeItems');
+
+    if (!excelBuffer) {
+      throw new Error("Failed to generate Excel buffer.");
+    }
+
+    console.log("Excel generated successfully.");
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="financeItems.xlsx"');
+    res.send(excelBuffer);
+  } catch (err) {
+    console.error("Error downloading finance items Excel:", err);
+    res.status(500).json({ message: 'Error al descargar los ítems financieros en Excel', error: err.message });
+  }
+};
