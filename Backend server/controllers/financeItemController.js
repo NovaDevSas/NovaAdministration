@@ -14,7 +14,11 @@ exports.getAllFinanceItems = async (req, res) => {
 // Obtener todos los ítems financieros de un proyecto
 exports.getFinanceItemsByProject = async (req, res) => {
   try {
-    const financeItems = await FinanceItem.find({ projectId: req.params.projectId });
+    const { projectId } = req.params;
+    const financeItems = await FinanceItem.find({ projectId });
+    if (!financeItems || financeItems.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron ítems financieros para este proyecto' });
+    }
     res.json(financeItems);
   } catch (err) {
     res.status(500).json({ message: err.message });
