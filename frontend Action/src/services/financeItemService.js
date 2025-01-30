@@ -14,7 +14,7 @@ export const getFinanceItems = async () => {
 
 export const getFinanceItemsByProject = async (projectId) => {
   try {
-    const response = await axios.get(`${API_URL}/project/${projectId}`);
+    const response = await axios.get(`${API_URL}/${projectId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching finance items by project:', error);

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getFinanceItems, createFinanceItem, updateFinanceItem, deleteFinanceItem } from '../../services/financeItemService';
+import { getFinanceItemsByProject, createFinanceItem, updateFinanceItem, deleteFinanceItem } from '../../services/financeItemService';
 import { getCompanyById } from '../../services/companyService';
 import { getProjectById } from '../../services/projectService';
 import FinanceItemsHeader from './FinanceItemsHeader';
@@ -43,7 +43,7 @@ const FinanceItems = () => {
       try {
         setLoading(true);
         const [items, project] = await Promise.all([
-          getFinanceItems(projectId),
+          getFinanceItemsByProject(projectId),
           getProjectById(projectId),
         ]);
         const company = await getCompanyById(project.companyId);
