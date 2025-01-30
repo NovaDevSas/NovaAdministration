@@ -96,29 +96,76 @@ const formatDataForExcel = (data, type) => {
 exports.generatePDF = async (data, type) => {
   return new Promise((resolve, reject) => {
     try {
-      const doc = new PDFDocument();
+      const doc = new PDFDocument({ 
+        margin: 50,
+        bufferPages: true // Para manejar múltiples páginas
+      });
       let buffers = [];
 
       doc.on('data', buffers.push.bind(buffers));
       doc.on('end', () => resolve(Buffer.concat(buffers)));
 
-      // Título del reporte
-      doc.fontSize(20).text(`${type.charAt(0).toUpperCase() + type.slice(1)} Report`, { align: 'center' });
-      doc.moveDown();
+      // Estilo del encabezado
+      doc.fillColor('#1E90FF')
+         .fontSize(20)
+         .font('Helvetica-Bold')
+         .text(`${type.charAt(0).toUpperCase() + type.slice(1)} Report`, { align: 'center' });
+      
+      // Línea decorativa bajo el título
+      doc.moveTo(50, 90)
+         .lineTo(doc.page.width - 50, 90)
+         .lineWidth(2)
+         .strokeColor('#1E90FF')
+         .stroke();
 
-      // Validar si hay datos
+      doc.moveDown(1.5);
+
+      // Validación de datos
       if (!data || data.length === 0) {
-        doc.fontSize(14).text("No hay datos disponibles", { align: 'center' });
+        doc.fontSize(14)
+           .fillColor('#FF4444')
+           .text("⚠️ No hay datos disponibles", { align: 'center' });
         doc.end();
         return;
       }
 
-      // Formatear datos en el PDF
+      // Contenido estilizado
       const formattedData = formatDataForPDF(data, type);
-      formattedData.forEach(item => {
-        doc.fontSize(12).text(item, { align: 'left' });
+      formattedData.forEach((item, index) => {
+        // Fondo alternado para items
+        if (index % 2 === 0) {
+          doc.rect(50, doc.y, doc.page.width - 100, 20)
+             .fillColor('#F8F9FA')
+             .fill();
+        }
+
+        doc.font('Helvetica-Bold')
+           .fillColor('#2D3436')
+           .text(`${index + 1}. ${item.name || 'N/A'}`, { indent: 10 });
+        
+        doc.font('Helvetica')
+           .fillColor('#636E72')
+           .text(item.replace(`${index + 1}. Nombre: ${item.name || 'N/A'}`, ''), {
+             indent: 30,
+             paragraphGap: 5
+           });
+
         doc.moveDown();
       });
+
+      // Pie de página
+      const totalPages = doc.bufferedPageRange().count;
+      for (let i = 0; i < totalPages; i++) {
+        doc.switchToPage(i);
+        doc.fillColor('#666666')
+           .fontSize(10)
+           .text(
+             `Página ${i + 1} de ${totalPages}`,
+             50,
+             doc.page.height - 30,
+             { align: 'center' }
+           );
+      }
 
       doc.end();
     } catch (err) {
@@ -133,10 +180,29 @@ exports.generateExcel = async (data, type) => {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet(`${type.charAt(0).toUpperCase() + type.slice(1)} Report`);
 
-      // Formatear datos para Excel
+      // Estilo mejorado para encabezados
+      worksheet.getRow(1).eachCell(cell => {
+        cell.font = { 
+          bold: true, 
+          color: { argb: 'FFFFFFFF' }, 
+          size: 12,
+          name: 'Calibri'
+        };
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF1E90FF' }
+        };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF000000' } },
+          bottom: { style: 'thin', color: { argb: 'FF000000' } }
+        };
+      });
+
+      // Formatear datos
       const formattedData = formatDataForExcel(data, type);
 
-      // Definir las columnas del Excel
+      // Mantener definición original de columnas
       if (formattedData.length > 0) {
         worksheet.columns = Object.keys(formattedData[0]).map(key => ({
           header: key,
@@ -145,17 +211,39 @@ exports.generateExcel = async (data, type) => {
         }));
       }
 
-      // Agregar filas al Excel
-      formattedData.forEach(item => {
-        worksheet.addRow(item);
+      // Añadir datos con estilos
+      formattedData.forEach((item, index) => {
+        const row = worksheet.addRow(item);
+        row.eachCell(cell => {
+          cell.font = { 
+            size: 11,
+            name: 'Calibri',
+            color: { argb: index % 2 === 0 ? 'FF2D3436' : 'FF636E72' }
+          };
+          cell.border = {
+            bottom: { style: 'thin', color: { argb: 'FFECF0F1' } }
+          };
+        });
+        
+        // Fondo alternado para filas
+        row.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: index % 2 === 0 ? 'FFF8F9FA' : 'FFFFFFFF' }
+        };
       });
 
-      // Generar el buffer del Excel
-      workbook.xlsx.writeBuffer().then(buffer => {
-        resolve(buffer);
-      }).catch(err => {
-        reject(err);
-      });
+      // Formato condicional para montos
+      if (type === 'financeItems') {
+        worksheet.getColumn('Amount').numFmt = '"$"#,##0.00';
+        worksheet.getColumn('Date').numFmt = 'dd/mm/yyyy';
+      }
+
+      // Congelar encabezado
+      worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+      // Generar buffer
+      workbook.xlsx.writeBuffer().then(resolve).catch(reject);
     } catch (err) {
       reject(err);
     }
