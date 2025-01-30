@@ -40,7 +40,7 @@ const Dashboard = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/projects/summary');
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/projects/summary`);
       const projects = response.data;
 
       if (Array.isArray(projects)) {
