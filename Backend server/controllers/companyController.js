@@ -1,6 +1,7 @@
 const Company = require('../models/Company');
 const Project = require('../models/Project'); // Importar el modelo Project
 const FinanceItem = require('../models/FinanceItem'); // Importar el modelo FinanceItem
+const { generatePDF, generateExcel } = require('../utils/exportUtils');
 
 
 // Obtener todas las empresas
@@ -106,75 +107,34 @@ exports.deleteCompany = async (req, res) => {
 };
 
 
-// Descargar ítems financieros en PDF
+// Descargar compañías en PDF
 exports.downloadCompaniesPDF = async (req, res) => {
   try {
-    console.log("Generating PDF for finance items...");
-    const financeItems = await Company.find();
-
-    if (!financeItems || financeItems.length === 0) {
-      console.log("No finance items found for PDF export.");
-      return res.status(404).json({ message: 'No hay ítems financieros disponibles para exportar' });
+    const companies = await Company.find();
+    if (!companies || companies.length === 0) {
+      return res.status(404).json({ message: 'No hay compañías disponibles para exportar' });
     }
-
-    console.log("Sanitizing finance items for PDF...");
-    const sanitizedFinanceItems = financeItems.map(item => ({
-      name: item.name || 'N/A',
-      contact: item.type || 'N/A',
-      status: item.type || 'N/A',
-      code: item.type || 'N/A',
-      nit: item.type || 'N/A',
-      email: item.type || 'N/A',
-      address: item.type || 'N/A'
-    }));
-
-    const pdfBuffer = await generatePDF(sanitizedFinanceItems, 'financeItems');
-
-    if (!pdfBuffer) {
-      throw new Error("Failed to generate PDF buffer.");
-    }
-    console.log("PDF generated successfully.");
+    const pdfBuffer = await generatePDF(companies, 'companies');
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="financeItems.pdf"');
+    res.setHeader('Content-Disposition', 'attachment; filename="companies.pdf"');
     res.send(pdfBuffer);
   } catch (err) {
-    console.error("Error downloading finance items PDF:", err);
-    res.status(500).json({ message: 'Error al descargar los ítems financieros en PDF', error: err.message });
+    res.status(500).json({ message: 'Error al descargar las compañías en PDF', error: err.message });
   }
 };
 
-// Descargar ítems financieros en Excel
+// Descargar compañías en Excel
 exports.downloadCompaniesExcel = async (req, res) => {
   try {
-    console.log("Generating Excel for finance items...");
-    const financeItems = await Company.find();
-
-    if (!financeItems || financeItems.length === 0) {
-      console.log("No finance items found for Excel export.");
-      return res.status(404).json({ message: 'No hay ítems financieros disponibles para exportar' });
+    const companies = await Company.find();
+    if (!companies || companies.length === 0) {
+      return res.status(404).json({ message: 'No hay compañías disponibles para exportar' });
     }
-
-    console.log("Sanitizing finance items for Excel...");
-    const sanitizedFinanceItems = financeItems.map(item => ({
-      name: item.name || 'N/A',
-      type: item.type || 'N/A',
-      amount: item.amount || 0,
-      date: item.date || new Date().toISOString(),
-      description: item.description || 'Sin descripción'
-    }));
-
-    const excelBuffer = await generateExcel(sanitizedFinanceItems, 'financeItems');
-
-    if (!excelBuffer) {
-      throw new Error("Failed to generate Excel buffer.");
-    }
-
-    console.log("Excel generated successfully.");
+    const excelBuffer = await generateExcel(companies, 'companies');
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename="financeItems.xlsx"');
+    res.setHeader('Content-Disposition', 'attachment; filename="companies.xlsx"');
     res.send(excelBuffer);
   } catch (err) {
-    console.error("Error downloading finance items Excel:", err);
-    res.status(500).json({ message: 'Error al descargar los ítems financieros en Excel', error: err.message });
+    res.status(500).json({ message: 'Error al descargar las compañías en Excel', error: err.message });
   }
 };

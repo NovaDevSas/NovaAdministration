@@ -135,28 +135,34 @@ exports.getProjectsWithFinanceSummary = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener el resumen financiero de los proyectos', error });
   }
 };
-// Descargar proyectos en PDF
+// Exportar todos los proyectos en PDF
 exports.downloadProjectsPDF = async (req, res) => {
   try {
     const projects = await Project.find();
+    if (!projects || projects.length === 0) {
+      return res.status(404).json({ message: 'No hay proyectos disponibles para exportar' });
+    }
     const pdfBuffer = await generatePDF(projects, 'projects');
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=projects.pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="projects.pdf"');
     res.send(pdfBuffer);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al descargar los proyectos en PDF', error });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al exportar los proyectos en PDF', error: err.message });
   }
 };
 
-// Descargar proyectos en Excel
+// Exportar todos los proyectos en Excel
 exports.downloadProjectsExcel = async (req, res) => {
   try {
     const projects = await Project.find();
+    if (!projects || projects.length === 0) {
+      return res.status(404).json({ message: 'No hay proyectos disponibles para exportar' });
+    }
     const excelBuffer = await generateExcel(projects, 'projects');
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename=projects.xlsx');
+    res.setHeader('Content-Disposition', 'attachment; filename="projects.xlsx"');
     res.send(excelBuffer);
-  } catch (error) {
-    res.status(500).json({ message: 'Error al descargar los proyectos en Excel', error });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al exportar los proyectos en Excel', error: err.message });
   }
 };
