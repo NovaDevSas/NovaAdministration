@@ -9,6 +9,7 @@ import CompanySearch from './components/CompanySearch';
 import CompanyList from './components/CompanyList';
 import CompanyForm from './components/CompanyForm';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
+import CompanyDetailsModal from './components/CompanyDetailsModal';
 
 const Companies = () => {
   const navigate = useNavigate();
@@ -33,6 +34,7 @@ const Companies = () => {
 
   const [loading, setLoading] = useState(false);
   const [notified, setNotified] = useState(false);
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   useEffect(() => {
     setLoading(companiesLoading);
@@ -45,8 +47,6 @@ const Companies = () => {
     }
   }, [companies, notified]);
 
-  const isEditing = !!editingCompany;
-
   const filteredCompanies = companies
     .filter((company) =>
       company.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -55,6 +55,14 @@ const Companies = () => {
 
   const handleSearchChange = (query) => {
     setSearchQuery(query);
+  };
+
+  const handleViewDetails = (company) => {
+    setSelectedCompany(company);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedCompany(null);
   };
 
   return (
@@ -129,6 +137,7 @@ const Companies = () => {
               companies={filteredCompanies}
               onEdit={handleEditCompany}
               onDelete={setConfirmDelete}
+              onViewDetails={handleViewDetails}
             />
           </div>
         </div>
@@ -165,6 +174,14 @@ const Companies = () => {
           }}
           onCancel={resetForm}
           isEditing={!!editingCompany}
+        />
+      )}
+
+      {/* Modal de detalles de la compañía */}
+      {selectedCompany && (
+        <CompanyDetailsModal
+          company={selectedCompany}
+          onClose={handleCloseDetails}
         />
       )}
     </div>

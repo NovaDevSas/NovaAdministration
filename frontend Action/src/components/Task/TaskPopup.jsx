@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { updateTask } from '../../services/taskService';
+import { createTask, updateTask } from '../../services/taskService';
 
-const TaskPopup = ({ task, users, onClose, onUpdate }) => {
-  const [formData, setFormData] = useState({ ...task });
+const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    assignedTo: '',
+    status: 'pending',
+    estimatedCompletionDate: '',
+    comments: [],
+    evidences: [],
+  });
   const [newComment, setNewComment] = useState('');
   const [newEvidence, setNewEvidence] = useState('');
   const [currentUser, setCurrentUser] = useState(null);
@@ -11,11 +19,24 @@ const TaskPopup = ({ task, users, onClose, onUpdate }) => {
     const user = JSON.parse(localStorage.getItem('user'));
     if (user) {
       setCurrentUser(user);
-      console.log('Usuario recuperado de localStorage:', user); // Verificación
     } else {
       console.error('Usuario no encontrado en localStorage.');
     }
   }, []);
+
+  useEffect(() => {
+    if (task) {
+      setFormData({
+        name: task.name,
+        description: task.description,
+        assignedTo: task.assignedTo,
+        status: task.status,
+        estimatedCompletionDate: task.estimatedCompletionDate,
+        comments: task.comments || [],
+        evidences: task.evidences || [],
+      });
+    }
+  }, [task]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,11 +54,16 @@ const TaskPopup = ({ task, users, onClose, onUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedTask = await updateTask(task._id, formData);
-      onUpdate(updatedTask);
+      if (task && task._id) {
+        const updatedTask = await updateTask(task._id, formData);
+        onUpdate(updatedTask);
+      } else {
+        const newTask = await createTask(formData);
+        onCreate(newTask);
+      }
       onClose();
     } catch (error) {
-      console.error('Error al actualizar la tarea:', error);
+      console.error('Error al guardar la tarea:', error);
     }
   };
 
@@ -72,7 +98,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-5xl">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">{task.name}</h2>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">{task && task._id ? 'Editar Tarea' : 'Crear Tarea'}</h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-4">
           {/* Column 1: Task Fields */}
           <div className="col-span-1">
@@ -117,6 +143,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate }) => {
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
+                <option value="">Seleccionar usuario</option>
                 {users.map((user) => (
                   <option key={user._id} value={user._id}>
                     {user.username}
@@ -129,7 +156,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate }) => {
               <input
                 type="date"
                 name="estimatedCompletionDate"
-                value={new Date(formData.estimatedCompletionDate).toISOString().split('T')[0]}
+                value={formData.estimatedCompletionDate ? new Date(formData.estimatedCompletionDate).toISOString().split('T')[0] : ''}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />

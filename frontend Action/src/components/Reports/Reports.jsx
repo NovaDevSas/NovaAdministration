@@ -1,7 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Card from "../Mosaic/Card";
 import ProjectsIcon from "../../assets/icons/ProjectsIcon";
 import TasksIcon from "../../assets/icons/TasksIcon";
 import FinanceIcon from "../../assets/icons/FinanceIcon";
@@ -41,29 +40,29 @@ const Reports = () => {
 
   const reports = [
     {
-      name: "Tasks",
-      description: "View task reports",
+      name: "Tareas",
+      description: "Ver reportes de tareas",
       path: "/tasks",
       color: "#32CD32", // Verde
       IconComponent: TasksIcon,
     },
     {
-      name: "Finance",
-      description: "View finance reports",
+      name: "Finanzas",
+      description: "Ver reportes de finanzas",
       path: "/finance-items",
       color: "#FFA500", // Naranja
       IconComponent: FinanceIcon,
     },
     {
-      name: "Projects",
-      description: "View project reports",
+      name: "Proyectos",
+      description: "Ver reportes de proyectos",
       path: "/projects",
       color: "#1E90FF", // Azul
       IconComponent: ProjectsIcon,
     },
     {
-      name: "Companies",
-      description: "View company reports",
+      name: "Empresas",
+      description: "Ver reportes de empresas",
       path: "/companies",
       color: "#FF6347", // Rojo
       IconComponent: CompaniesIcon,
@@ -126,37 +125,62 @@ const Reports = () => {
 
       {/* Encabezado */}
       <header className="text-center z-20 mb-12">
-        <h1 className="text-5xl font-bold text-purple-700">Reports</h1>
+        <h1 className="text-5xl font-bold text-purple-700">Reportes</h1>
         <p className="text-gray-600 mt-4 text-xl">
-          Navigate to the desired report
+          Descarga el reporte deseado
         </p>
       </header>
 
       {/* Contenedor de Cards */}
-      <div className="grid grid-cols-2 gap-6 z-20">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 z-20">
         {reports.map((report) => (
-          <div key={report.name} className="relative">
-            <Card
-              title={report.name}
-              description={report.description}
-              IconComponent={report.IconComponent}
-              color={report.color}
-              onClick={() => navigate(`/reports${report.path}`)}
-              className="flex flex-col items-center justify-center shadow-lg rounded-xl bg-gradient-to-b from-white to-gray-100 p-8 hover:shadow-2xl hover:scale-105 transition-all duration-300"
-            />
-            <div className="absolute bottom-4 left-4 right-4 flex justify-between space-x-2">
-              <button
-                onClick={() => downloadPDF(report.path)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
-              >
-                Download PDF
-              </button>
-              <button
-                onClick={() => downloadExcel(report.path)}
-                className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition duration-300"
-              >
-                Download Excel
-              </button>
+          <div key={report.name} className="relative p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105" style={{ border: `2px solid ${report.color}`, backgroundColor: 'rgba(255, 255, 255, 0.8)' }}>
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <report.IconComponent className="w-16 h-16" style={{ color: report.color }} />
+              <h3 className="text-2xl font-bold" style={{ color: report.color }}>{report.name}</h3>
+              <p className="text-gray-600">{report.description}</p>
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => downloadPDF(report.path)}
+                  className="flex items-center bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
+                >
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 12h14M12 5l7 7-7 7"
+                    ></path>
+                  </svg>
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() => downloadExcel(report.path)}
+                  className="flex items-center bg-green-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-600 transition duration-300"
+                >
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 12h14M12 5l7 7-7 7"
+                    ></path>
+                  </svg>
+                  <span>Excel</span>
+                </button>
+              </div>
             </div>
           </div>
         ))}

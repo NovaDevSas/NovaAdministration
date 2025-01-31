@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { getTasks } from '../../services/taskService';
+import { getTasks, deleteTask } from '../../services/taskService';
 import { getProjects } from '../../services/projectService';
 import { getUsers } from '../../services/userService';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import TaskPopup from './TaskPopup';
+import TaskActions from './TaskActions';
 
 const Tasks = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const Tasks = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedProjectIds, setExpandedProjectIds] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
-  const toastId = useRef(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
     const fetchProjectsTasksAndUsers = async () => {
@@ -62,10 +63,27 @@ const Tasks = () => {
 
   const handleTaskClick = (task) => {
     setSelectedTask(task);
+    setIsPopupOpen(true);
   };
 
   const closeTaskPopup = () => {
     setSelectedTask(null);
+    setIsPopupOpen(false);
+  };
+
+  const handleAddTask = () => {
+    setSelectedTask(null);
+    setIsPopupOpen(true);
+  };
+
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await deleteTask(taskId);
+      setTasks(tasks.filter((task) => task._id !== taskId));
+      toast.success('Tarea eliminada exitosamente');
+    } catch (error) {
+      toast.error('Error al eliminar la tarea');
+    }
   };
 
   const updateTask = (updatedTask) => {
@@ -163,12 +181,19 @@ const Tasks = () => {
                     <h2 className="text-xl font-bold text-purple-700">{project.name}</h2>
                     <p className="text-gray-700">{project.description}</p>
                   </div>
-                  <button
-                    onClick={() => toggleProjectExpansion(project._id)}
-                    className="text-indigo-600 hover:text-indigo-800 focus:outline-none"
-                  >
-                    {expandedProjectIds.includes(project._id) ? <FaChevronUp /> : <FaChevronDown />}
-                  </button>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => toggleProjectExpansion(project._id)}
+                      className="text-indigo-600 hover:text-indigo-800 focus:outline-none"
+                    >
+                      {expandedProjectIds.includes(project._id) ? <FaChevronUp /> : <FaChevronDown />}
+                    </button>
+                    <TaskActions
+                      onAdd={handleAddTask}
+                      onDelete={handleDeleteTask}
+                      selectedTask={selectedTask}
+                    />
+                  </div>
                 </div>
                 {expandedProjectIds.includes(project._id) && (
                   <ul className="mt-2 space-y-2">
@@ -200,12 +225,13 @@ const Tasks = () => {
       </div>
 
       {/* Popup de detalles de la tarea */}
-      {selectedTask && (
+      {isPopupOpen && (
         <TaskPopup
           task={selectedTask}
           users={users}
           onClose={closeTaskPopup}
           onUpdate={updateTask}
+          onCreate={(newTask) => setTasks([...tasks, newTask])}
           currentUser={currentUser}
         />
       )}

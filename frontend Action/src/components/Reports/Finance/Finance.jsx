@@ -23,10 +23,9 @@ const Finance = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+    <div className="flex flex-col items-center justify-center space-y-4">
       <button onClick={downloadPDF} className="bg-blue-500 text-white px-4 py-2 rounded-lg">Download PDF</button>
       <button onClick={downloadExcel} className="bg-green-500 text-white px-4 py-2 rounded-lg">Download Excel</button>
-      {/* Aquí puedes agregar el contenido de tus finanzas */}
     </div>
   );
 };
