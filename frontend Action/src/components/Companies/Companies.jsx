@@ -58,7 +58,7 @@ const Companies = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-200 relative overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-200 relative overflow-hidden flex flex-col items-center justify-center">
       {/* Fondo dinámico */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <svg
@@ -77,50 +77,60 @@ const Companies = () => {
       {/* Botón para retornar a Home */}
       <button
         onClick={() => navigate('/home')}
-        className="absolute top-6 left-6 w-10 h-10 bg-purple-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-purple-700 transition-transform hover:scale-110 focus:ring-2 focus:ring-purple-500 focus:outline-none z-10"
+        className="fixed top-6 left-6 w-12 h-12 bg-purple-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-purple-700 transition-transform hover:scale-110 focus:ring-2 focus:ring-purple-500 focus:outline-none z-10"
         title="Regresar a Home"
       >
-        ←
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
 
-      {/* Contenedor de notificaciones */}
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar
-        newestOnTop
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <div className="max-w-7xl w-full p-6 z-10">
+        {/* Contenedor de notificaciones */}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar
+          newestOnTop
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
 
-      {/* Indicador de carga */}
-      {loading && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-40 z-50">
-          <div className="flex flex-col items-center space-y-2">
-            <div className="w-8 h-8 border-4 border-purple-500 border-opacity-50 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-sm text-gray-300">Cargando...</span>
+        {/* Indicador de carga */}
+        {loading && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-40 z-50">
+            <div className="flex flex-col items-center space-y-2">
+              <div className="w-8 h-8 border-4 border-purple-500 border-opacity-50 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm text-gray-300">Cargando...</span>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className={`max-w-7xl mx-auto p-6 ${loading ? 'opacity-50' : 'opacity-100 transition-opacity duration-300 z-10'}`}>
-        {/* Encabezado */}
-        <CompanyHeader onNewCompany={() => setIsModalOpen(true)} />
+        <div className={`bg-white rounded-3xl shadow-2xl p-8 ${loading ? 'opacity-50' : 'opacity-100'} transition-opacity duration-300`}>
+          {/* Encabezado */}
+          <CompanyHeader onNewCompany={() => setIsModalOpen(true)} />
 
-        {/* Contenido principal */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mt-6">
-          <CompanySearch
-            searchQuery={searchQuery}
-            onSearchChange={handleSearchChange}
-          />
+          {/* Contenido principal */}
+          <div className="mt-6">
+            <CompanySearch
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+            />
 
-          <CompanyList
-            companies={filteredCompanies}
-            onEdit={handleEditCompany}
-            onDelete={setConfirmDelete}
-          />
+            <CompanyList
+              companies={filteredCompanies}
+              onEdit={handleEditCompany}
+              onDelete={setConfirmDelete}
+            />
+          </div>
         </div>
       </div>
 

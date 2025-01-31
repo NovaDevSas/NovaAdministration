@@ -21,6 +21,7 @@ const ProjectForm = ({
     if (!project.port) newErrors.port = 'El puerto es obligatorio.';
     if (!project.host) newErrors.host = 'El host es obligatorio.';
     if (!project.subdomain) newErrors.subdomain = 'El subdominio es obligatorio.';
+    if (!project.status) newErrors.status = 'El estado es obligatorio.';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -39,8 +40,7 @@ const ProjectForm = ({
   };
 
   return (
-   
-   <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
         <h2 className="text-2xl font-bold mb-4 text-center text-purple-700">
           {isEditing ? 'Actualizar Proyecto' : 'Crear Nuevo Proyecto'}
@@ -188,6 +188,26 @@ const ProjectForm = ({
             </div>
           </div>
 
+          {/* Estado */}
+          <div>
+            <label htmlFor="status" className="block text-gray-700 mb-1">Estado</label>
+            <select
+              name="status"
+              id="status"
+              value={project.status || 'active'}
+              onChange={handleInputChange}
+              className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
+                errors.status ? 'border-red-500' : 'border-gray-300'
+              }`}
+              aria-invalid={!!errors.status}
+            >
+              <option value="active">Activo</option>
+              <option value="processing">En Proceso</option>
+              <option value="completed">Completado</option>
+              <option value="inactive">Inactivo</option>
+            </select>
+          </div>
+
           {/* Botones */}
           <div className="mt-4 flex justify-end gap-3">
             <button
@@ -221,6 +241,7 @@ ProjectForm.propTypes = {
     port: PropTypes.string,
     host: PropTypes.string,
     subdomain: PropTypes.string,
+    status: PropTypes.string,
   }),
   onChange: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,

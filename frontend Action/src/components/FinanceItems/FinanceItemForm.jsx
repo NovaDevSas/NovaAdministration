@@ -16,7 +16,9 @@ const FinanceItemForm = ({
   // Sincronizar fecha con el estado local
   useEffect(() => {
     if (financeItem.date) {
-      setDate(financeItem.date);
+      setDate(new Date(financeItem.date).toISOString().split('T')[0]); // Asegurarse de que la fecha esté en formato YYYY-MM-DD
+    } else {
+      setDate(new Date().toISOString().split('T')[0]); // Establecer la fecha actual por defecto
     }
   }, [financeItem.date]);
 
@@ -26,7 +28,7 @@ const FinanceItemForm = ({
     if (!financeItem.type) newErrors.type = 'El tipo es obligatorio.';
     if (!financeItem.amount || financeItem.amount <= 0) newErrors.amount = 'El monto debe ser mayor a cero.';
     if (!date) newErrors.date = 'La fecha es obligatoria.';
-    if (new Date(date) < new Date()) newErrors.date = 'La fecha debe ser hoy o una fecha futura.';
+    // Permitir cualquier fecha, incluyendo la fecha actual y fechas anteriores
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -42,6 +44,12 @@ const FinanceItemForm = ({
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     onChange({ target: { name, value } });
+  };
+
+  const handleDateChange = (e) => {
+    const { value } = e.target;
+    setDate(value);
+    onChange({ target: { name: 'date', value } });
   };
 
   return (
@@ -145,10 +153,7 @@ const FinanceItemForm = ({
               name="date"
               id="date"
               value={date}
-              onChange={(e) => {
-                setDate(e.target.value);
-                handleInputChange(e);
-              }}
+              onChange={handleDateChange}
               className={`w-full p-2 border rounded-lg focus:ring-2 focus:ring-purple-500 ${
                 errors.date ? 'border-red-500' : 'border-gray-300'
               }`}

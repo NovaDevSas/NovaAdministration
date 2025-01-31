@@ -7,7 +7,7 @@ const CompanyList = ({ companies, onEdit, onDelete, onRefresh }) => {
     <div className="mt-6">
       {companies.length > 0 ? (
         <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           role="list"
           aria-label="Lista de empresas"
         >
@@ -44,7 +44,7 @@ const CompanyList = ({ companies, onEdit, onDelete, onRefresh }) => {
           </p>
           <button
             onClick={onRefresh}
-            className="mt-4 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1"
+            className="mt-4 bg-purple-600 text-white px-4 py-2 rounded-full shadow-md hover:bg-purple-700 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1"
             aria-label="Actualizar lista de empresas"
           >
             Refrescar Lista

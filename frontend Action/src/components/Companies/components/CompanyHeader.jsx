@@ -33,7 +33,7 @@ const CompanyHeader = ({ onNewCompany }) => {
         {/* Botón para nueva empresa */}
         <button
           onClick={onNewCompany}
-          className="relative ml-auto px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg shadow-md hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-transform duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 z-20"
+          className="relative ml-auto px-5 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full shadow-lg hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-transform duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 z-20 flex items-center"
           aria-label="Abrir el formulario para crear una nueva empresa"
           title="Crear nueva empresa"
         >

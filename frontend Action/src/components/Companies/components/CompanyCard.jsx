@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FaEnvelope,
@@ -8,10 +8,13 @@ import {
   FaTrash,
   FaCheckCircle,
   FaTimesCircle,
+  FaEye,
 } from 'react-icons/fa';
+import CompanyDetailsModal from './CompanyDetailsModal';
 
 const CompanyCard = ({ company, onEdit, onDelete }) => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isActive = company.status?.trim().toLowerCase() === 'activa';
 
@@ -19,9 +22,14 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
     navigate(`/projects/${company._id}`);
   };
 
+  const handleViewDetails = (e) => {
+    e.stopPropagation();
+    setIsModalOpen(true);
+  };
+
   return (
     <div
-      className={`relative p-4 rounded-md shadow-md transition-transform transform hover:scale-105 bg-white border ${
+      className={`relative p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 bg-white border ${
         isActive ? 'border-gray-200' : 'border-red-300'
       }`}
       onClick={handleCardClick}
@@ -31,12 +39,12 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
     >
       {/* Fondo decorativo */}
       {!isActive && (
-        <div className="absolute inset-0 rounded-md bg-red-100 opacity-10 pointer-events-none"></div>
+        <div className="absolute inset-0 rounded-lg bg-red-100 opacity-10 pointer-events-none"></div>
       )}
 
       {/* Encabezado */}
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-base font-semibold text-gray-800 flex items-center truncate">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 flex items-center truncate">
           {company.name || 'Sin nombre'}
           {isActive ? (
             <FaCheckCircle className="ml-2 text-green-500" title="Empresa activa" />
@@ -47,7 +55,7 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
       </div>
 
       {/* Descripción y detalles */}
-      <div className="space-y-2 text-gray-600 text-sm">
+      <div className="space-y-3 text-gray-600 text-sm">
         <p>
           Estado: <span className={isActive ? 'text-green-500' : 'text-red-500'}>{isActive ? 'Activa' : 'Inactiva'}</span>
         </p>
@@ -66,13 +74,20 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
       </div>
 
       {/* Acciones */}
-      <div className="mt-3 flex justify-end gap-2">
+      <div className="mt-4 flex justify-end gap-3">
+        <button
+          onClick={handleViewDetails}
+          className="px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 transition"
+          title="Ver Detalles"
+        >
+          <FaEye />
+        </button>
         <button
           onClick={(e) => {
             e.stopPropagation();
             onEdit(company);
           }}
-          className="px-2 py-1 bg-blue-500 text-white text-xs rounded-md hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition"
+          className="px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition"
           title="Editar Empresa"
         >
           <FaEdit />
@@ -82,12 +97,20 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
             e.stopPropagation();
             onDelete(company);
           }}
-          className="px-2 py-1 bg-red-500 text-white text-xs rounded-md hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition"
+          className="px-3 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 transition"
           title="Eliminar Empresa"
         >
           <FaTrash />
         </button>
       </div>
+
+      {/* Modal de detalles */}
+      {isModalOpen && (
+        <CompanyDetailsModal
+          company={company}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

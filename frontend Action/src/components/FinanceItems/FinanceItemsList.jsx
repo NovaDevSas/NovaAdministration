@@ -6,7 +6,8 @@ import FinanceItemDetailsModal from './FinanceItemDetailsModal';
 const formatDate = (date) => {
   if (!date) return 'Sin Fecha';
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-  return new Date(date).toLocaleDateString(undefined, options);
+  const formattedDate = new Date(date).toLocaleDateString('es-ES', options); // Use 'es-ES' to ensure correct date format in Spanish
+  return formattedDate;
 };
 
 const FinanceItemsList = ({ financeItems = [], onEdit, onDelete }) => {
