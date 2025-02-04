@@ -1,7 +1,7 @@
 import React from 'react';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FaPlus } from 'react-icons/fa';
 
-const TaskActions = ({ onAdd, onDelete, selectedTask }) => {
+const TaskActions = ({ onAdd }) => {
   return (
     <div className="flex space-x-2">
       <button
@@ -10,14 +10,6 @@ const TaskActions = ({ onAdd, onDelete, selectedTask }) => {
         title="Agregar Tarea"
       >
         <FaPlus />
-      </button>
-      <button
-        onClick={() => selectedTask && onDelete(selectedTask._id)}
-        className="p-2 bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition-transform transform hover:scale-110 focus:outline-none"
-        title="Eliminar Tarea"
-        disabled={!selectedTask}
-      >
-        <FaTrash />
       </button>
     </div>
   );

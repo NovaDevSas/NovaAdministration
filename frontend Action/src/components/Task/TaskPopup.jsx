@@ -8,6 +8,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
     assignedTo: '',
     status: 'pending',
     estimatedCompletionDate: '',
+    estimatedHours: '',
     comments: [],
     evidences: [],
   });
@@ -32,6 +33,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
         assignedTo: task.assignedTo,
         status: task.status,
         estimatedCompletionDate: task.estimatedCompletionDate,
+        estimatedHours: task.estimatedHours,
         comments: task.comments || [],
         evidences: task.evidences || [],
       });
@@ -110,6 +112,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
             <div className="mb-4">
@@ -119,6 +122,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
                 value={formData.description}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
             <div className="mb-4">
@@ -128,6 +132,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
                 value={formData.status}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               >
                 <option value="pending">Pendiente</option>
                 <option value="in-progress">En Progreso</option>
@@ -142,6 +147,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
                 value={formData.assignedTo}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               >
                 <option value="">Seleccionar usuario</option>
                 {users.map((user) => (
@@ -159,6 +165,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
                 value={formData.estimatedCompletionDate ? new Date(formData.estimatedCompletionDate).toISOString().split('T')[0] : ''}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
             <div className="mb-4">
@@ -169,6 +176,7 @@ const TaskPopup = ({ task, users, onClose, onUpdate, onCreate }) => {
                 value={formData.estimatedHours}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
           </div>

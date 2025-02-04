@@ -190,7 +190,6 @@ const Tasks = () => {
                     </button>
                     <TaskActions
                       onAdd={handleAddTask}
-                      onDelete={handleDeleteTask}
                       selectedTask={selectedTask}
                     />
                   </div>
