@@ -67,7 +67,7 @@ const CompanyForm = ({ company, onChange, onSave, onCancel, isEditing }) => {
       <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-lg w-full border-t-4 border-purple-500 transform transition-transform duration-300 scale-95 hover:scale-100">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-800">
-            {isEditing ? `Editar Empresa: ${company.name}` : 'Crear Nueva Empresa'}
+            {isEditing ? `Editar Empresa: ${company.name}` : 'Crear Nuevo cliente'}
           </h2>
           <button
             onClick={onCancel}
@@ -87,7 +87,7 @@ const CompanyForm = ({ company, onChange, onSave, onCancel, isEditing }) => {
           className="space-y-4"
         >
           <InputField
-            label="Nombre de la Empresa"
+            label="Nombre del Cliente"
             name="name"
             value={company.name}
             onChange={onChange}
@@ -119,6 +119,7 @@ const CompanyForm = ({ company, onChange, onSave, onCancel, isEditing }) => {
             options={[
               { value: 'activa', label: 'Activa' },
               { value: 'inactiva', label: 'Inactiva' },
+              { value: 'lead', label: 'Lead' }, // Agregar la opción 'Lead'
             ]}
             required
           />

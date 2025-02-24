@@ -7,7 +7,7 @@ const CompanyList = ({ companies, onEdit, onDelete, onRefresh }) => {
     <div className="mt-6">
       {companies.length > 0 ? (
         <div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
           role="list"
           aria-label="Lista de empresas"
         >
@@ -60,7 +60,7 @@ CompanyList.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      status: PropTypes.oneOf(['activa', 'inactiva']).isRequired, // Validación estricta
+      status: PropTypes.oneOf(['activa', 'inactiva', 'lead']).isRequired, // Incluir 'lead' como un estado válido
     })
   ).isRequired,
   onEdit: PropTypes.func.isRequired,

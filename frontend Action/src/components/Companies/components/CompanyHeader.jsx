@@ -27,7 +27,7 @@ const CompanyHeader = ({ onNewCompany }) => {
           aria-level="1"
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl md:text-4xl font-extrabold text-center bg-gradient-to-r from-purple-500 to-indigo-500 text-transparent bg-clip-text z-20"
         >
-          Gestión de Empresas
+          Gestión de Clientes
         </h1>
 
         {/* Botón para nueva empresa */}
@@ -38,7 +38,7 @@ const CompanyHeader = ({ onNewCompany }) => {
           title="Crear nueva empresa"
         >
           <FaPlus className="mr-2" />
-          <span>Nueva Empresa</span>
+          <span>Nuevo Cliente</span>
         </button>
       </div>
     </header>

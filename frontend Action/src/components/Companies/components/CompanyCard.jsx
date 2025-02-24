@@ -17,6 +17,7 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isActive = company.status?.trim().toLowerCase() === 'activa';
+  const isLead = company.status?.trim().toLowerCase() === 'lead';
 
   const handleCardClick = () => {
     navigate(`/projects/${company._id}`);
@@ -29,8 +30,8 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
 
   return (
     <div
-      className={`relative p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 bg-white border ${
-        isActive ? 'border-gray-200' : 'border-red-300'
+      className={`relative p-4 rounded-lg shadow-lg transition-transform transform hover:scale-105 bg-white border ${
+        isActive ? 'border-green-500' : isLead ? 'border-yellow-500' : 'border-red-500'
       }`}
       onClick={handleCardClick}
       role="button"
@@ -38,8 +39,11 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
       onKeyDown={(e) => e.key === 'Enter' && handleCardClick()}
     >
       {/* Fondo decorativo */}
-      {!isActive && (
+      {!isActive && !isLead && (
         <div className="absolute inset-0 rounded-lg bg-red-100 opacity-10 pointer-events-none"></div>
+      )}
+      {isLead && (
+        <div className="absolute inset-0 rounded-lg bg-yellow-100 opacity-10 pointer-events-none"></div>
       )}
 
       {/* Encabezado */}
@@ -48,6 +52,8 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
           {company.name || 'Sin nombre'}
           {isActive ? (
             <FaCheckCircle className="ml-2 text-green-500" title="Empresa activa" />
+          ) : isLead ? (
+            <FaCheckCircle className="ml-2 text-yellow-500" title="Empresa lead" />
           ) : (
             <FaTimesCircle className="ml-2 text-red-500" title="Empresa inactiva" />
           )}
@@ -57,7 +63,7 @@ const CompanyCard = ({ company, onEdit, onDelete }) => {
       {/* Descripción y detalles */}
       <div className="space-y-3 text-gray-600 text-sm">
         <p>
-          Estado: <span className={isActive ? 'text-green-500' : 'text-red-500'}>{isActive ? 'Activa' : 'Inactiva'}</span>
+          Estado: <span className={isActive ? 'text-green-500' : isLead ? 'text-yellow-500' : 'text-red-500'}>{isActive ? 'Activa' : isLead ? 'Lead' : 'Inactiva'}</span>
         </p>
         <p className="flex items-center truncate">
           <FaPhone className="mr-2 text-green-500" />

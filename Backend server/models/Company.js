@@ -11,6 +11,7 @@ const companySchema = new mongoose.Schema({
   },
   status: {
     type: String,
+    enum: ['activa', 'inactiva', 'lead'], // Agregar 'lead' como un estado permitido
     required: true
   },
   code: {

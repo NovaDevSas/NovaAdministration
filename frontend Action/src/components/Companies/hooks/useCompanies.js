@@ -33,7 +33,7 @@ export const useCompanies = () => {
       return false;
     }
 
-    if (!['activa', 'inactiva'].includes(company.status?.trim().toLowerCase())) {
+    if (!['activa', 'inactiva', 'lead'].includes(company.status?.trim().toLowerCase())) {
       console.warn('Estado inválido:', company.status);
       return false;
     }
@@ -49,7 +49,7 @@ export const useCompanies = () => {
       setCompanies(
         data.map((company) => ({
           ...company,
-          status: company.status?.trim().toLowerCase() || 'inactiva',
+          status: company.status?.trim().toLowerCase(),
         }))
       );
     } catch (error) {
@@ -72,7 +72,7 @@ export const useCompanies = () => {
       const data = await createCompany(newCompany);
       setCompanies((prev) => [
         ...prev,
-        { ...data, status: data.status?.trim().toLowerCase() || 'inactiva' },
+        { ...data, status: data.status?.trim().toLowerCase() },
       ]);
       resetForm();
     } catch (error) {
@@ -92,7 +92,7 @@ export const useCompanies = () => {
       setCompanies((prev) =>
         prev.map((company) =>
           company._id === editingCompany._id
-            ? { ...updatedCompany, status: updatedCompany.status?.trim().toLowerCase() || 'inactiva' }
+            ? { ...updatedCompany, status: updatedCompany.status?.trim().toLowerCase() }
             : company
         )
       );
