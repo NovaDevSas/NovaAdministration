@@ -27,7 +27,7 @@ const MosaicPage = () => {
       IconComponent: ReportsIcon,
     },
     {
-      name: 'Compañías',
+      name: 'Clientes',
       description: 'Revisa tus compañias',
       path: '/companies',
       color: '#1E90FF',
