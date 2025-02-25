@@ -61,8 +61,8 @@ const Reports = () => {
       IconComponent: ProjectsIcon,
     },
     {
-      name: "Empresas",
-      description: "Ver reportes de empresas",
+      name: "Clientes",
+      description: "Ver reportes de Clientes",
       path: "/companies",
       color: "#FF6347", // Rojo
       IconComponent: CompaniesIcon,
